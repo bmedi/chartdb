@@ -2,17 +2,25 @@ import type { LanguageMetadata, LanguageTranslation } from '../types';
 
 export const tr: LanguageTranslation = {
     translation: {
+        editor_sidebar: {
+            new_diagram: 'Yeni',
+            browse: 'Gözat',
+            tables: 'Tablolar',
+            refs: 'Refs',
+            areas: 'Alanlar',
+            dependencies: 'Bağımlılıklar',
+            custom_types: 'Özel Tipler',
+        },
         menu: {
-            file: {
-                file: 'Dosya',
-                new: 'Yeni',
-                open: 'Aç',
+            actions: {
+                actions: 'Eylemler',
+                new: 'Yeni...',
+                browse: 'Gözat...',
                 save: 'Kaydet',
                 import: 'Veritabanı İçe Aktar',
                 export_sql: 'SQL Olarak Dışa Aktar',
                 export_as: 'Olarak Dışa Aktar',
-                delete_diagram: 'Diyagramı Sil',
-                exit: 'Çıkış',
+                delete_diagram: 'Sil',
             },
             edit: {
                 edit: 'Düzenle',
@@ -26,7 +34,10 @@ export const tr: LanguageTranslation = {
                 hide_sidebar: 'Kenar Çubuğunu Gizle',
                 hide_cardinality: 'Kardinaliteyi Gizle',
                 show_cardinality: 'Kardinaliteyi Göster',
+                show_field_attributes: 'Alan Özelliklerini Göster',
+                hide_field_attributes: 'Alan Özelliklerini Gizle',
                 zoom_on_scroll: 'Kaydırarak Yakınlaştır',
+                show_views: 'Veritabanı Görünümleri',
                 theme: 'Tema',
                 show_dependencies: 'Bağımlılıkları Göster',
                 hide_dependencies: 'Bağımlılıkları Gizle',
@@ -43,9 +54,7 @@ export const tr: LanguageTranslation = {
             help: {
                 help: 'Yardım',
                 docs_website: 'Belgeleme',
-                visit_website: "ChartDB'yi Ziyaret Et",
                 join_discord: "Discord'a Katıl",
-                schedule_a_call: 'Bize Ulaş!',
             },
         },
 
@@ -66,20 +75,11 @@ export const tr: LanguageTranslation = {
         },
 
         reorder_diagram_alert: {
-            title: 'Diyagramı Yeniden Sırala',
+            title: 'Diyagramı Otomatik Düzenle',
             description:
                 'Bu işlem tüm tabloları yeniden düzenleyecektir. Devam etmek istiyor musunuz?',
-            reorder: 'Yeniden Sırala',
+            reorder: 'Otomatik Düzenle',
             cancel: 'İptal',
-        },
-
-        multiple_schemas_alert: {
-            title: 'Birden Fazla Şema',
-            description:
-                'Bu diyagramda {{schemasCount}} şema var. Şu anda görüntülenen: {{formattedSchemas}}.',
-            dont_show_again: 'Tekrar gösterme',
-            change_schema: 'Değiştir',
-            none: 'yok',
         },
 
         copy_to_clipboard_toast: {
@@ -115,14 +115,11 @@ export const tr: LanguageTranslation = {
         copy_to_clipboard: 'Panoya Kopyala',
         copied: 'Kopyalandı!',
         side_panel: {
-            schema: 'Şema:',
-            filter_by_schema: 'Şemaya Göre Filtrele',
-            search_schema: 'Şema ara...',
-            no_schemas_found: 'Şema bulunamadı.',
             view_all_options: 'Tüm Seçenekleri Gör...',
             tables_section: {
                 tables: 'Tablolar',
                 add_table: 'Tablo Ekle',
+                add_view: 'Görünüm Ekle',
                 filter: 'Filtrele',
                 collapse: 'Hepsini Daralt',
                 // TODO: Translate
@@ -148,16 +145,23 @@ export const tr: LanguageTranslation = {
                     field_actions: {
                         title: 'Alan Özellikleri',
                         unique: 'Tekil',
+                        auto_increment: 'Otomatik Artış',
                         comments: 'Yorumlar',
                         no_comments: 'Yorum yok',
                         delete_field: 'Alanı Sil',
                         // TODO: Translate
+                        default_value: 'Default Value',
+                        no_default: 'No default',
+                        // TODO: Translate
                         character_length: 'Max Length',
+                        precision: 'Hassasiyet',
+                        scale: 'Ölçek',
                     },
                     index_actions: {
                         title: 'İndeks Özellikleri',
                         name: 'Ad',
                         unique: 'Tekil',
+                        index_type: 'İndeks Türü',
                         delete_index: 'İndeksi Sil',
                     },
                     table_actions: {
@@ -175,12 +179,15 @@ export const tr: LanguageTranslation = {
                     description: 'Başlamak için bir tablo oluşturun',
                 },
             },
-            relationships_section: {
-                relationships: 'İlişkiler',
+            refs_section: {
+                refs: 'Refs',
                 filter: 'Filtrele',
-                add_relationship: 'İlişki Ekle',
                 collapse: 'Hepsini Daralt',
+                add_relationship: 'İlişki Ekle',
+                relationships: 'İlişkiler',
+                dependencies: 'Bağımlılıklar',
                 relationship: {
+                    relationship: 'İlişki',
                     primary: 'Birincil Tablo',
                     foreign: 'Referans Tablo',
                     cardinality: 'Kardinalite',
@@ -190,16 +197,8 @@ export const tr: LanguageTranslation = {
                         delete_relationship: 'Sil',
                     },
                 },
-                empty_state: {
-                    title: 'İlişki yok',
-                    description: 'Tabloları bağlamak için bir ilişki oluşturun',
-                },
-            },
-            dependencies_section: {
-                dependencies: 'Bağımlılıklar',
-                filter: 'Filtrele',
-                collapse: 'Hepsini Daralt',
                 dependency: {
+                    dependency: 'Bağımlılık',
                     table: 'Tablo',
                     dependent_table: 'Bağımlı Görünüm',
                     delete_dependency: 'Sil',
@@ -209,8 +208,59 @@ export const tr: LanguageTranslation = {
                     },
                 },
                 empty_state: {
-                    title: 'Bağımlılık yok',
-                    description: 'Başlamak için bir görünüm oluşturun',
+                    title: 'İlişki yok',
+                    description: 'Başlamak için bir ilişki oluşturun',
+                },
+            },
+
+            // TODO: Translate
+            areas_section: {
+                areas: 'Areas',
+                add_area: 'Add Area',
+                filter: 'Filter',
+                clear: 'Clear Filter',
+                no_results: 'No areas found matching your filter.',
+
+                area: {
+                    area_actions: {
+                        title: 'Area Actions',
+                        edit_name: 'Edit Name',
+                        delete_area: 'Delete Area',
+                    },
+                },
+                empty_state: {
+                    title: 'No areas',
+                    description: 'Create an area to get started',
+                },
+            },
+            // TODO: Translate
+            custom_types_section: {
+                custom_types: 'Custom Types',
+                filter: 'Filter',
+                clear: 'Clear Filter',
+                no_results: 'No custom types found matching your filter.',
+                empty_state: {
+                    title: 'No custom types',
+                    description:
+                        'Custom types will appear here when they are available in your database',
+                },
+                custom_type: {
+                    kind: 'Kind',
+                    enum_values: 'Enum Values',
+                    composite_fields: 'Fields',
+                    no_fields: 'No fields defined',
+                    no_values: 'Tanımlanmış enum değeri yok',
+                    field_name_placeholder: 'Field name',
+                    field_type_placeholder: 'Select type',
+                    add_field: 'Add Field',
+                    no_fields_tooltip: 'No fields defined for this custom type',
+                    custom_type_actions: {
+                        title: 'Actions',
+                        highlight_fields: 'Highlight Fields',
+                        delete_custom_type: 'Delete',
+                        clear_field_highlight: 'Clear Highlight',
+                    },
+                    delete_custom_type: 'Delete Type',
                 },
             },
         },
@@ -221,8 +271,14 @@ export const tr: LanguageTranslation = {
             show_all: 'Hepsini Gör',
             undo: 'Geri Al',
             redo: 'Yinele',
-            reorder_diagram: 'Diyagramı Yeniden Sırala',
+            reorder_diagram: 'Diyagramı Otomatik Düzenle',
+            // TODO: Translate
+            clear_custom_type_highlight: 'Clear highlight for "{{typeName}}"',
+            custom_type_highlight_tooltip:
+                'Highlighting "{{typeName}}" - Click to clear',
             highlight_overlapping_tables: 'Çakışan Tabloları Vurgula',
+            // TODO: Translate
+            filter: 'Filter Tables',
         },
         new_diagram_dialog: {
             database_selection: {
@@ -236,7 +292,7 @@ export const tr: LanguageTranslation = {
                 title: 'Veritabanını İçe Aktar',
                 database_edition: 'Veritabanı Sürümü:',
                 step_1: 'Bu komut dosyasını veritabanınızda çalıştırın:',
-                step_2: 'Komut dosyası sonucunu buraya yapıştırın:',
+                step_2: 'Komut dosyası sonucunu buraya yapıştırın →',
                 script_results_placeholder: 'Komut dosyası sonuçları burada...',
                 ssms_instructions: {
                     button_text: 'SSMS Talimatları',
@@ -257,7 +313,7 @@ export const tr: LanguageTranslation = {
             import: 'İçe Aktar',
         },
         open_diagram_dialog: {
-            title: 'Diyagramı Aç',
+            title: 'Veritabanı Aç',
             description: 'Aşağıdaki listeden açmak için bir diyagram seçin.',
             table_columns: {
                 name: 'Ad',
@@ -267,6 +323,12 @@ export const tr: LanguageTranslation = {
             },
             cancel: 'İptal',
             open: 'Aç',
+
+            diagram_actions: {
+                open: 'Aç',
+                duplicate: 'Kopyala',
+                delete: 'Sil',
+            },
         },
 
         export_sql_dialog: {
@@ -327,6 +389,12 @@ export const tr: LanguageTranslation = {
             scale_4x: '4x',
             cancel: 'İptal',
             export: 'Dışa Aktar',
+            // TODO: Translate
+            advanced_options: 'Advanced Options',
+            pattern: 'Include background pattern',
+            pattern_description: 'Add subtle grid pattern to background.',
+            transparent: 'Transparent background',
+            transparent_description: 'Remove background color from image.',
         },
         new_table_schema_dialog: {
             title: 'Şema Seç',
@@ -340,6 +408,14 @@ export const tr: LanguageTranslation = {
             description: 'Tablo "{{tableName}}" şemasını güncelle',
             cancel: 'İptal',
             confirm: 'Değiştir',
+        },
+
+        create_table_schema_dialog: {
+            title: 'Yeni Şema Oluştur',
+            description:
+                'Henüz hiç şema mevcut değil. Tablolarınızı düzenlemek için ilk şemanızı oluşturun.',
+            create: 'Oluştur',
+            cancel: 'İptal',
         },
         star_us_dialog: {
             title: 'Bize yardım et!',
@@ -358,7 +434,7 @@ export const tr: LanguageTranslation = {
             error: {
                 title: 'Error exporting diagram',
                 description:
-                    'Something went wrong. Need help? chartdb.io@gmail.com',
+                    'Something went wrong. Need help? support@chartdb.io',
             },
         },
         // TODO: Translate
@@ -370,7 +446,7 @@ export const tr: LanguageTranslation = {
             error: {
                 title: 'Error importing diagram',
                 description:
-                    'The diagram JSON is invalid. Please check the JSON and try again. Need help? chartdb.io@gmail.com',
+                    'The diagram JSON is invalid. Please check the JSON and try again. Need help? support@chartdb.io',
             },
         },
         // TODO: Translate
@@ -395,7 +471,10 @@ export const tr: LanguageTranslation = {
         },
         canvas_context_menu: {
             new_table: 'Yeni Tablo',
+            new_view: 'Yeni Görünüm',
             new_relationship: 'Yeni İlişki',
+            // TODO: Translate
+            new_area: 'New Area',
         },
         table_node_context_menu: {
             edit_table: 'Tabloyu Düzenle',
@@ -415,6 +494,9 @@ export const tr: LanguageTranslation = {
         language_select: {
             change_language: 'Dil',
         },
+
+        on: 'Açık',
+        off: 'Kapalı',
     },
 };
 

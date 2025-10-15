@@ -2,17 +2,25 @@ import type { LanguageMetadata, LanguageTranslation } from '../types';
 
 export const ar: LanguageTranslation = {
     translation: {
+        editor_sidebar: {
+            new_diagram: 'جديد',
+            browse: 'تصفح',
+            tables: 'الجداول',
+            refs: 'المراجع',
+            areas: 'المناطق',
+            dependencies: 'التبعيات',
+            custom_types: 'الأنواع المخصصة',
+        },
         menu: {
-            file: {
-                file: 'ملف',
-                new: 'جديد',
-                open: 'فتح',
+            actions: {
+                actions: 'الإجراءات',
+                new: 'جديد...',
+                browse: 'تصفح...',
                 save: 'حفظ',
                 import: 'استيراد قاعدة بيانات',
                 export_sql: 'SQL تصدير',
                 export_as: 'تصدير كـ',
-                delete_diagram: 'حذف الرسم البياني',
-                exit: 'خروج',
+                delete_diagram: 'حذف',
             },
             edit: {
                 edit: 'تحرير',
@@ -26,7 +34,10 @@ export const ar: LanguageTranslation = {
                 hide_sidebar: 'إخفاء الشريط الجانبي',
                 hide_cardinality: 'إخفاء الكاردينالية',
                 show_cardinality: 'إظهار الكاردينالية',
+                hide_field_attributes: 'إخفاء خصائص الحقل',
+                show_field_attributes: 'إظهار خصائص الحقل',
                 zoom_on_scroll: 'تكبير/تصغير عند التمرير',
+                show_views: 'عروض قاعدة البيانات',
                 theme: 'المظهر',
                 show_dependencies: 'إظهار الاعتمادات',
                 hide_dependencies: 'إخفاء الاعتمادات',
@@ -42,9 +53,7 @@ export const ar: LanguageTranslation = {
             help: {
                 help: 'مساعدة',
                 docs_website: 'الوثائق',
-                visit_website: 'ChartDB قم بزيارة',
-                join_discord: 'Discord انضم إلينا على',
-                schedule_a_call: '!تحدث معنا',
+                join_discord: 'انضم إلينا على Discord',
             },
         },
 
@@ -65,20 +74,11 @@ export const ar: LanguageTranslation = {
         },
 
         reorder_diagram_alert: {
-            title: 'إعادة ترتيب الرسم البياني',
+            title: 'ترتيب تلقائي للرسم البياني',
             description:
                 'هذا الإجراء سيقوم بإعادة ترتيب الجداول في المخطط بشكل تلقائي. هل تريد المتابعة؟',
-            reorder: 'إعادة ترتيب',
+            reorder: 'ترتيب تلقائي',
             cancel: 'إلغاء',
-        },
-
-        multiple_schemas_alert: {
-            title: 'مخططات متعددة',
-            description:
-                '{{formattedSchemas}} :مخططات في هذا الرسم البياني. يتم حاليا عرض {{schemasCount}} هناك',
-            dont_show_again: 'لا تظهره مجدداً',
-            change_schema: 'تغيير',
-            none: 'لا شيء',
         },
 
         copy_to_clipboard_toast: {
@@ -115,14 +115,11 @@ export const ar: LanguageTranslation = {
         copied: '!تم النسخ',
 
         side_panel: {
-            schema: ':المخطط',
-            filter_by_schema: 'تصفية حسب المخطط',
-            search_schema: '...بحث في المخطط',
-            no_schemas_found: '.لم يتم العثور على مخططات',
             view_all_options: '...عرض جميع الخيارات',
             tables_section: {
                 tables: 'الجداول',
                 add_table: 'إضافة جدول',
+                add_view: 'إضافة عرض',
                 filter: 'تصفية',
                 collapse: 'طي الكل',
                 // TODO: Translate
@@ -148,16 +145,22 @@ export const ar: LanguageTranslation = {
                     field_actions: {
                         title: 'خصائص الحقل',
                         unique: 'فريد',
+                        auto_increment: 'زيادة تلقائية',
                         comments: 'تعليقات',
                         no_comments: 'لا يوجد تعليقات',
                         delete_field: 'حذف الحقل',
                         // TODO: Translate
                         character_length: 'Max Length',
+                        precision: 'الدقة',
+                        scale: 'النطاق',
+                        default_value: 'Default Value',
+                        no_default: 'No default',
                     },
                     index_actions: {
                         title: 'خصائص الفهرس',
                         name: 'الإسم',
                         unique: 'فريد',
+                        index_type: 'نوع الفهرس',
                         delete_index: 'حذف الفهرس',
                     },
                     table_actions: {
@@ -174,12 +177,15 @@ export const ar: LanguageTranslation = {
                     description: 'أنشئ جدولاً للبدء',
                 },
             },
-            relationships_section: {
-                relationships: 'العلاقات',
+            refs_section: {
+                refs: 'المراجع',
                 filter: 'تصفية',
-                add_relationship: 'إضافة علاقة',
                 collapse: 'طي الكل',
+                add_relationship: 'إضافة علاقة',
+                relationships: 'العلاقات',
+                dependencies: 'الاعتمادات',
                 relationship: {
+                    relationship: 'العلاقة',
                     primary: 'الجدول الأساسي',
                     foreign: 'الجدول المرتبط',
                     cardinality: 'الكاردينالية',
@@ -189,16 +195,8 @@ export const ar: LanguageTranslation = {
                         delete_relationship: 'حذف',
                     },
                 },
-                empty_state: {
-                    title: 'لا توجد علاقات',
-                    description: 'إنشئ علاقة لربط الجداول',
-                },
-            },
-            dependencies_section: {
-                dependencies: 'الاعتمادات',
-                filter: 'تصفية',
-                collapse: 'طي الكل',
                 dependency: {
+                    dependency: 'الاعتماد',
                     table: 'الجدول',
                     dependent_table: 'عرض الاعتمادات',
                     delete_dependency: 'حذف',
@@ -208,8 +206,60 @@ export const ar: LanguageTranslation = {
                     },
                 },
                 empty_state: {
-                    title: 'لا توجد اعتمادات',
-                    description: 'إنشاء اعتماد للبدء',
+                    title: 'لا توجد علاقات',
+                    description: 'إنشاء علاقة للبدء',
+                },
+            },
+
+            // TODO: Translate
+            areas_section: {
+                areas: 'Areas',
+                add_area: 'Add Area',
+                filter: 'Filter',
+                clear: 'Clear Filter',
+                no_results: 'No areas found matching your filter.',
+
+                area: {
+                    area_actions: {
+                        title: 'Area Actions',
+                        edit_name: 'Edit Name',
+                        delete_area: 'Delete Area',
+                    },
+                },
+                empty_state: {
+                    title: 'No areas',
+                    description: 'Create an area to get started',
+                },
+            },
+
+            // TODO: Translate
+            custom_types_section: {
+                custom_types: 'Custom Types',
+                filter: 'Filter',
+                clear: 'Clear Filter',
+                no_results: 'No custom types found matching your filter.',
+                empty_state: {
+                    title: 'No custom types',
+                    description:
+                        'Custom types will appear here when they are available in your database',
+                },
+                custom_type: {
+                    kind: 'Kind',
+                    enum_values: 'Enum Values',
+                    composite_fields: 'Fields',
+                    no_fields: 'No fields defined',
+                    no_values: 'لم يتم تحديد قيم التعداد',
+                    field_name_placeholder: 'Field name',
+                    field_type_placeholder: 'Select type',
+                    add_field: 'Add Field',
+                    no_fields_tooltip: 'No fields defined for this custom type',
+                    custom_type_actions: {
+                        title: 'Actions',
+                        highlight_fields: 'Highlight Fields',
+                        delete_custom_type: 'Delete',
+                        clear_field_highlight: 'Clear Highlight',
+                    },
+                    delete_custom_type: 'Delete Type',
                 },
             },
         },
@@ -221,8 +271,13 @@ export const ar: LanguageTranslation = {
             show_all: 'عرض الكل',
             undo: 'تراجع',
             redo: 'إعادة',
-            reorder_diagram: 'إعادة ترتيب الرسم البياني',
+            reorder_diagram: 'ترتيب تلقائي للرسم البياني',
             highlight_overlapping_tables: 'تمييز الجداول المتداخلة',
+            // TODO: Translate
+            filter: 'Filter Tables',
+            clear_custom_type_highlight: 'Clear highlight for "{{typeName}}"',
+            custom_type_highlight_tooltip:
+                'Highlighting "{{typeName}}" - Click to clear',
         },
 
         new_diagram_dialog: {
@@ -238,7 +293,7 @@ export const ar: LanguageTranslation = {
                 title: 'إسترد قاعدة بياناتك',
                 database_edition: ':إصدار قاعدة البيانات',
                 step_1: ':قم بتشغيل هذا البرنامج النصي في قاعدة بياناتك',
-                step_2: ':إلصق نتيجة البرنامج النصي هنا',
+                step_2: ':إلصق نتيجة البرنامج النصي هنا →',
                 script_results_placeholder: '...نتيجة البرنامج النصي هنا',
                 ssms_instructions: {
                     button_text: 'SSMS تعليمات',
@@ -259,7 +314,7 @@ export const ar: LanguageTranslation = {
         },
 
         open_diagram_dialog: {
-            title: 'فتح مخطط',
+            title: 'فتح قاعدة بيانات',
             description: 'اختر مخططًا لفتحه من القائمة ادناه',
             table_columns: {
                 name: 'الإسم',
@@ -269,6 +324,12 @@ export const ar: LanguageTranslation = {
             },
             cancel: 'إلغاء',
             open: 'فتح',
+
+            diagram_actions: {
+                open: 'فتح',
+                duplicate: 'تكرار',
+                delete: 'حذف',
+            },
         },
 
         export_sql_dialog: {
@@ -332,6 +393,12 @@ export const ar: LanguageTranslation = {
             scale_4x: '4x',
             cancel: 'إلغاء',
             export: 'تصدير',
+            // TODO: Translate
+            advanced_options: 'Advanced Options',
+            pattern: 'Include background pattern',
+            pattern_description: 'Add subtle grid pattern to background.',
+            transparent: 'Transparent background',
+            transparent_description: 'Remove background color from image.',
         },
 
         new_table_schema_dialog: {
@@ -347,6 +414,13 @@ export const ar: LanguageTranslation = {
             description: '"{{tableName}}" تحديث مخطط الجدول',
             cancel: 'إلغاء',
             confirm: 'تغيير',
+        },
+        create_table_schema_dialog: {
+            title: 'إنشاء مخطط جديد',
+            description:
+                'لا توجد مخططات حتى الآن. قم بإنشاء أول مخطط لتنظيم جداولك.',
+            create: 'إنشاء',
+            cancel: 'إلغاء',
         },
 
         star_us_dialog: {
@@ -364,7 +438,7 @@ export const ar: LanguageTranslation = {
             error: {
                 title: 'حدث خطأ أثناء التصدير',
                 description:
-                    'chartdb.io@gmail.com حدث خطأ ما. هل تحتاج إلى مساعدة؟',
+                    'support@chartdb.io حدث خطأ ما. هل تحتاج إلى مساعدة؟',
             },
         },
         import_diagram_dialog: {
@@ -375,7 +449,7 @@ export const ar: LanguageTranslation = {
             error: {
                 title: 'حدث خطأ أثناء الاستيراد',
                 description:
-                    'chartdb.io@gmail.com و المحاولة مرة اخرى. هل تحتاج إلى المساعدة؟ JSON غير صالح. يرجى التحقق من JSON الرسم البياني',
+                    'support@chartdb.io و المحاولة مرة اخرى. هل تحتاج إلى المساعدة؟ JSON غير صالح. يرجى التحقق من JSON الرسم البياني',
             },
         },
         import_dbml_dialog: {
@@ -401,7 +475,10 @@ export const ar: LanguageTranslation = {
 
         canvas_context_menu: {
             new_table: 'جدول جديد',
+            new_view: 'عرض جديد',
             new_relationship: 'علاقة جديدة',
+            // TODO: Translate
+            new_area: 'New Area',
         },
 
         table_node_context_menu: {
@@ -420,6 +497,8 @@ export const ar: LanguageTranslation = {
         language_select: {
             change_language: 'اللغة',
         },
+        on: 'تشغيل',
+        off: 'إيقاف',
     },
 };
 

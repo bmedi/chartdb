@@ -7,4 +7,11 @@ export enum DatabaseType {
     SQLITE = 'sqlite',
     CLICKHOUSE = 'clickhouse',
     COCKROACHDB = 'cockroachdb',
+    ORACLE = 'oracle',
 }
+
+export const databaseTypesWithCommentSupport: DatabaseType[] = [
+    DatabaseType.POSTGRESQL,
+    DatabaseType.COCKROACHDB,
+    DatabaseType.ORACLE,
+];

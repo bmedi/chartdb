@@ -2,17 +2,25 @@ import type { LanguageMetadata, LanguageTranslation } from '../types';
 
 export const mr: LanguageTranslation = {
     translation: {
+        editor_sidebar: {
+            new_diagram: 'नवीन',
+            browse: 'ब्राउज',
+            tables: 'टेबल',
+            refs: 'Refs',
+            areas: 'क्षेत्रे',
+            dependencies: 'अवलंबने',
+            custom_types: 'कस्टम प्रकार',
+        },
         menu: {
-            file: {
-                file: 'फाइल',
-                new: 'नवीन',
-                open: 'उघडा',
+            actions: {
+                actions: 'क्रिया',
+                new: 'नवीन...',
+                browse: 'ब्राउज करा...',
                 save: 'जतन करा',
                 import: 'डेटाबेस इम्पोर्ट करा',
                 export_sql: 'SQL एक्स्पोर्ट करा',
                 export_as: 'म्हणून एक्स्पोर्ट करा',
-                delete_diagram: 'आरेख हटवा',
-                exit: 'बाहेर पडा',
+                delete_diagram: 'हटवा',
             },
             edit: {
                 edit: 'संपादन करा',
@@ -26,7 +34,10 @@ export const mr: LanguageTranslation = {
                 hide_sidebar: 'साइडबार लपवा',
                 hide_cardinality: 'कार्डिनॅलिटी लपवा',
                 show_cardinality: 'कार्डिनॅलिटी दाखवा',
+                hide_field_attributes: 'फील्ड गुणधर्म लपवा',
+                show_field_attributes: 'फील्ड गुणधर्म दाखवा',
                 zoom_on_scroll: 'स्क्रोलवर झूम करा',
+                show_views: 'डेटाबेस व्ह्यूज',
                 theme: 'थीम',
                 show_dependencies: 'डिपेंडेन्सि दाखवा',
                 hide_dependencies: 'डिपेंडेन्सि लपवा',
@@ -43,9 +54,7 @@ export const mr: LanguageTranslation = {
             help: {
                 help: 'मदत',
                 docs_website: 'दस्तऐवजीकरण',
-                visit_website: 'ChartDB ला भेट द्या',
                 join_discord: 'आमच्या डिस्कॉर्डमध्ये सामील व्हा',
-                schedule_a_call: 'आमच्याशी बोला!',
             },
         },
 
@@ -66,20 +75,11 @@ export const mr: LanguageTranslation = {
         },
 
         reorder_diagram_alert: {
-            title: 'आरेख पुनःक्रमित करा',
+            title: 'आरेख स्वयंचलित व्यवस्थित करा',
             description:
                 'ही क्रिया आरेखातील सर्व टेबल्सची पुनर्रचना करेल. तुम्हाला पुढे जायचे आहे का?',
-            reorder: 'पुनःक्रमित करा',
+            reorder: 'स्वयंचलित व्यवस्थित करा',
             cancel: 'रद्द करा',
-        },
-
-        multiple_schemas_alert: {
-            title: 'एकाधिक स्कीमा',
-            description:
-                '{{schemasCount}} स्कीमा या आरेखात आहेत. सध्या दाखवत आहोत: {{formattedSchemas}}.',
-            dont_show_again: 'पुन्हा दाखवू नका',
-            change_schema: 'बदला',
-            none: 'काहीही नाही',
         },
 
         copy_to_clipboard_toast: {
@@ -118,14 +118,11 @@ export const mr: LanguageTranslation = {
         copied: 'Copied!',
 
         side_panel: {
-            schema: 'स्कीमा:',
-            filter_by_schema: 'स्कीमा द्वारे फिल्टर करा',
-            search_schema: 'स्कीमा शोधा...',
-            no_schemas_found: 'कोणतेही स्कीमा सापडले नाहीत.',
             view_all_options: 'सर्व पर्याय पहा...',
             tables_section: {
                 tables: 'टेबल्स',
                 add_table: 'टेबल जोडा',
+                add_view: 'व्ह्यू जोडा',
                 filter: 'फिल्टर',
                 collapse: 'सर्व संकुचित करा',
                 // TODO: Translate
@@ -151,16 +148,23 @@ export const mr: LanguageTranslation = {
                     field_actions: {
                         title: 'फील्ड गुणधर्म',
                         unique: 'युनिक',
+                        auto_increment: 'ऑटो इंक्रिमेंट',
                         comments: 'टिप्पण्या',
                         no_comments: 'कोणत्याही टिप्पणी नाहीत',
                         delete_field: 'फील्ड हटवा',
                         // TODO: Translate
+                        default_value: 'Default Value',
+                        no_default: 'No default',
+                        // TODO: Translate
                         character_length: 'Max Length',
+                        precision: 'अचूकता',
+                        scale: 'प्रमाण',
                     },
                     index_actions: {
                         title: 'इंडेक्स गुणधर्म',
                         name: 'नाव',
                         unique: 'युनिक',
+                        index_type: 'इंडेक्स प्रकार',
                         delete_index: 'इंडेक्स हटवा',
                     },
                     table_actions: {
@@ -178,12 +182,15 @@ export const mr: LanguageTranslation = {
                     description: 'सुरू करण्यासाठी एक टेबल तयार करा',
                 },
             },
-            relationships_section: {
-                relationships: 'रिलेशनशिप',
+            refs_section: {
+                refs: 'Refs',
                 filter: 'फिल्टर',
-                add_relationship: 'रिलेशनशिप जोडा',
                 collapse: 'सर्व संकुचित करा',
+                add_relationship: 'रिलेशनशिप जोडा',
+                relationships: 'रिलेशनशिप',
+                dependencies: 'डिपेंडेन्सि',
                 relationship: {
+                    relationship: 'रिलेशनशिप',
                     primary: 'प्राथमिक टेबल',
                     foreign: 'रेफरंस टेबल',
                     cardinality: 'कार्डिनॅलिटी',
@@ -193,17 +200,8 @@ export const mr: LanguageTranslation = {
                         delete_relationship: 'हटवा',
                     },
                 },
-                empty_state: {
-                    title: 'कोणतेही रिलेशनशिप नाहीत',
-                    description:
-                        'टेबल्स कनेक्ट करण्यासाठी एक रिलेशनशिप तयार करा',
-                },
-            },
-            dependencies_section: {
-                dependencies: 'डिपेंडेन्सि',
-                filter: 'फिल्टर',
-                collapse: 'सर्व संकुचित करा',
                 dependency: {
+                    dependency: 'डिपेंडेन्सि',
                     table: 'टेबल',
                     dependent_table: 'डिपेंडेन्सि दृश्य',
                     delete_dependency: 'हटवा',
@@ -213,8 +211,59 @@ export const mr: LanguageTranslation = {
                     },
                 },
                 empty_state: {
-                    title: 'कोणत्याही डिपेंडेन्सि नाहीत',
-                    description: 'सुरू करण्यासाठी एक दृश्य तयार करा',
+                    title: 'कोणतेही रिलेशनशिप नाहीत',
+                    description: 'सुरू करण्यासाठी एक रिलेशनशिप तयार करा',
+                },
+            },
+
+            // TODO: Translate
+            areas_section: {
+                areas: 'Areas',
+                add_area: 'Add Area',
+                filter: 'Filter',
+                clear: 'Clear Filter',
+                no_results: 'No areas found matching your filter.',
+
+                area: {
+                    area_actions: {
+                        title: 'Area Actions',
+                        edit_name: 'Edit Name',
+                        delete_area: 'Delete Area',
+                    },
+                },
+                empty_state: {
+                    title: 'No areas',
+                    description: 'Create an area to get started',
+                },
+            },
+            // TODO: Translate
+            custom_types_section: {
+                custom_types: 'Custom Types',
+                filter: 'Filter',
+                clear: 'Clear Filter',
+                no_results: 'No custom types found matching your filter.',
+                empty_state: {
+                    title: 'No custom types',
+                    description:
+                        'Custom types will appear here when they are available in your database',
+                },
+                custom_type: {
+                    kind: 'Kind',
+                    enum_values: 'Enum Values',
+                    composite_fields: 'Fields',
+                    no_fields: 'No fields defined',
+                    no_values: 'कोणतीही enum मूल्ये परिभाषित नाहीत',
+                    field_name_placeholder: 'Field name',
+                    field_type_placeholder: 'Select type',
+                    add_field: 'Add Field',
+                    no_fields_tooltip: 'No fields defined for this custom type',
+                    custom_type_actions: {
+                        title: 'Actions',
+                        highlight_fields: 'Highlight Fields',
+                        delete_custom_type: 'Delete',
+                        clear_field_highlight: 'Clear Highlight',
+                    },
+                    delete_custom_type: 'Delete Type',
                 },
             },
         },
@@ -226,8 +275,14 @@ export const mr: LanguageTranslation = {
             show_all: 'सर्व दाखवा',
             undo: 'पूर्ववत करा',
             redo: 'पुन्हा करा',
-            reorder_diagram: 'आरेख पुनःक्रमित करा',
+            reorder_diagram: 'आरेख स्वयंचलित व्यवस्थित करा',
+            // TODO: Translate
+            clear_custom_type_highlight: 'Clear highlight for "{{typeName}}"',
+            custom_type_highlight_tooltip:
+                'Highlighting "{{typeName}}" - Click to clear',
             highlight_overlapping_tables: 'ओव्हरलॅपिंग टेबल्स हायलाइट करा',
+            // TODO: Translate
+            filter: 'Filter Tables',
         },
 
         new_diagram_dialog: {
@@ -243,7 +298,7 @@ export const mr: LanguageTranslation = {
                 title: 'तुमचा डेटाबेस आयात करा',
                 database_edition: 'डेटाबेस संस्करण:',
                 step_1: 'तुमच्या डेटाबेसमध्ये हा स्क्रिप्ट चालवा:',
-                step_2: 'स्क्रिप्टचा परिणाम येथे पेस्ट करा:',
+                step_2: 'स्क्रिप्टचा परिणाम येथे पेस्ट करा →',
                 script_results_placeholder: 'स्क्रिप्ट परिणाम येथे...',
                 ssms_instructions: {
                     button_text: 'SSMS सूचना',
@@ -266,7 +321,7 @@ export const mr: LanguageTranslation = {
         },
 
         open_diagram_dialog: {
-            title: 'आरेख उघडा',
+            title: 'डेटाबेस उघडा',
             description: 'खालील यादीतून उघडण्यासाठी एक आरेख निवडा.',
             table_columns: {
                 name: 'नाव',
@@ -276,6 +331,12 @@ export const mr: LanguageTranslation = {
             },
             cancel: 'रद्द करा',
             open: 'उघडा',
+
+            diagram_actions: {
+                open: 'उघडा',
+                duplicate: 'डुप्लिकेट',
+                delete: 'हटवा',
+            },
         },
 
         export_sql_dialog: {
@@ -339,6 +400,12 @@ export const mr: LanguageTranslation = {
             scale_4x: '4x',
             cancel: 'रद्द करा',
             export: 'निर्यात करा',
+            // TODO: Translate
+            advanced_options: 'Advanced Options',
+            pattern: 'Include background pattern',
+            pattern_description: 'Add subtle grid pattern to background.',
+            transparent: 'Transparent background',
+            transparent_description: 'Remove background color from image.',
         },
 
         new_table_schema_dialog: {
@@ -354,6 +421,14 @@ export const mr: LanguageTranslation = {
             description: 'टेबल "{{tableName}}" स्कीमा अपडेट करा',
             cancel: 'रद्द करा',
             confirm: 'बदला',
+        },
+
+        create_table_schema_dialog: {
+            title: 'नवीन स्कीमा तयार करा',
+            description:
+                'अजून कोणतीही स्कीमा अस्तित्वात नाही. आपल्या टेबल्स व्यवस्थित करण्यासाठी आपली पहिली स्कीमा तयार करा.',
+            create: 'तयार करा',
+            cancel: 'रद्द करा',
         },
 
         star_us_dialog: {
@@ -374,7 +449,7 @@ export const mr: LanguageTranslation = {
             error: {
                 title: 'Error exporting diagram',
                 description:
-                    'Something went wrong. Need help? chartdb.io@gmail.com',
+                    'Something went wrong. Need help? support@chartdb.io',
             },
         },
 
@@ -387,7 +462,7 @@ export const mr: LanguageTranslation = {
             error: {
                 title: 'Error importing diagram',
                 description:
-                    'The diagram JSON is invalid. Please check the JSON and try again. Need help? chartdb.io@gmail.com',
+                    'The diagram JSON is invalid. Please check the JSON and try again. Need help? support@chartdb.io',
             },
         },
         // TODO: Translate
@@ -414,7 +489,10 @@ export const mr: LanguageTranslation = {
 
         canvas_context_menu: {
             new_table: 'नवीन टेबल',
+            new_view: 'नवीन व्ह्यू',
             new_relationship: 'नवीन रिलेशनशिप',
+            // TODO: Translate
+            new_area: 'New Area',
         },
 
         table_node_context_menu: {
@@ -435,6 +513,9 @@ export const mr: LanguageTranslation = {
         language_select: {
             change_language: 'भाषा बदला',
         },
+
+        on: 'चालू',
+        off: 'बंद',
     },
 };
 

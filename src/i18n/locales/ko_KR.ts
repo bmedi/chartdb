@@ -2,17 +2,25 @@ import type { LanguageMetadata, LanguageTranslation } from '../types';
 
 export const ko_KR: LanguageTranslation = {
     translation: {
+        editor_sidebar: {
+            new_diagram: '새로 만들기',
+            browse: '찾아보기',
+            tables: '테이블',
+            refs: 'Refs',
+            areas: '영역',
+            dependencies: '종속성',
+            custom_types: '사용자 지정 타입',
+        },
         menu: {
-            file: {
-                file: '파일',
-                new: '새 다이어그램',
-                open: '열기',
+            actions: {
+                actions: '작업',
+                new: '새로 만들기...',
+                browse: '찾아보기...',
                 save: '저장',
                 import: '데이터베이스 가져오기',
                 export_sql: 'SQL로 저장',
                 export_as: '다른 형식으로 저장',
-                delete_diagram: '다이어그램 삭제',
-                exit: '종료',
+                delete_diagram: '삭제',
             },
             edit: {
                 edit: '편집',
@@ -26,7 +34,10 @@ export const ko_KR: LanguageTranslation = {
                 hide_sidebar: '사이드바 숨기기',
                 hide_cardinality: '카디널리티 숨기기',
                 show_cardinality: '카디널리티 보이기',
+                hide_field_attributes: '필드 속성 숨기기',
+                show_field_attributes: '필드 속성 보이기',
                 zoom_on_scroll: '스크롤 시 확대',
+                show_views: '데이터베이스 뷰',
                 theme: '테마',
                 show_dependencies: '종속성 보이기',
                 hide_dependencies: '종속성 숨기기',
@@ -42,9 +53,7 @@ export const ko_KR: LanguageTranslation = {
             help: {
                 help: '도움말',
                 docs_website: '선적 서류 비치',
-                visit_website: 'ChartDB 사이트 방문',
                 join_discord: 'Discord 가입',
-                schedule_a_call: 'Talk with us!',
             },
         },
 
@@ -65,20 +74,11 @@ export const ko_KR: LanguageTranslation = {
         },
 
         reorder_diagram_alert: {
-            title: '다이어그램 재정렬',
+            title: '다이어그램 자동 정렬',
             description:
                 '이 작업은 모든 다이어그램이 재정렬됩니다. 계속하시겠습니까?',
-            reorder: '재정렬',
+            reorder: '자동 정렬',
             cancel: '취소',
-        },
-
-        multiple_schemas_alert: {
-            title: '다중 스키마',
-            description:
-                '현재 다이어그램에 {{schemasCount}}개의 스키마가 있습니다. Currently displaying: {{formattedSchemas}}.',
-            dont_show_again: '다시 보여주지 마세요',
-            change_schema: '변경',
-            none: '없음',
         },
 
         copy_to_clipboard_toast: {
@@ -115,14 +115,11 @@ export const ko_KR: LanguageTranslation = {
         copied: '복사됨!',
 
         side_panel: {
-            schema: '스키마:',
-            filter_by_schema: '스키마로 필터링',
-            search_schema: '스키마 검색...',
-            no_schemas_found: '스키마를 찾을 수 없습니다.',
             view_all_options: '전체 옵션 보기...',
             tables_section: {
                 tables: '테이블',
                 add_table: '테이블 추가',
+                add_view: '뷰 추가',
                 filter: '필터',
                 collapse: '모두 접기',
                 // TODO: Translate
@@ -148,16 +145,23 @@ export const ko_KR: LanguageTranslation = {
                     field_actions: {
                         title: '필드 속성',
                         unique: '유니크 여부',
+                        auto_increment: '자동 증가',
                         comments: '주석',
                         no_comments: '주석 없음',
                         delete_field: '필드 삭제',
                         // TODO: Translate
+                        default_value: 'Default Value',
+                        no_default: 'No default',
+                        // TODO: Translate
                         character_length: 'Max Length',
+                        precision: '정밀도',
+                        scale: '소수점 자릿수',
                     },
                     index_actions: {
                         title: '인덱스 속성',
                         name: '인덱스 명',
                         unique: '유니크 여부',
+                        index_type: '인덱스 타입',
                         delete_index: '인덱스 삭제',
                     },
                     table_actions: {
@@ -174,12 +178,15 @@ export const ko_KR: LanguageTranslation = {
                     description: '테이블을 만들어 시작하세요.',
                 },
             },
-            relationships_section: {
-                relationships: '연관 관계',
+            refs_section: {
+                refs: 'Refs',
                 filter: '필터',
-                add_relationship: '연관 관계 추가',
                 collapse: '모두 접기',
+                add_relationship: '연관 관계 추가',
+                relationships: '연관 관계',
+                dependencies: '종속성',
                 relationship: {
+                    relationship: '연관 관계',
                     primary: '주 테이블',
                     foreign: '참조 테이블',
                     cardinality: '카디널리티',
@@ -189,16 +196,8 @@ export const ko_KR: LanguageTranslation = {
                         delete_relationship: '연관 관계 삭제',
                     },
                 },
-                empty_state: {
-                    title: '연관 관계',
-                    description: '테이블 연결을 위해 연관 관계를 생성하세요',
-                },
-            },
-            dependencies_section: {
-                dependencies: '종속성',
-                filter: '필터',
-                collapse: '모두 접기',
                 dependency: {
+                    dependency: '종속성',
                     table: '테이블',
                     dependent_table: '뷰 테이블',
                     delete_dependency: '삭제',
@@ -208,8 +207,59 @@ export const ko_KR: LanguageTranslation = {
                     },
                 },
                 empty_state: {
-                    title: '뷰 테이블 없음',
-                    description: '뷰 테이블을 만들어 시작하세요.',
+                    title: '연관 관계 없음',
+                    description: '연관 관계를 만들어 시작하세요.',
+                },
+            },
+
+            // TODO: Translate
+            areas_section: {
+                areas: 'Areas',
+                add_area: 'Add Area',
+                filter: 'Filter',
+                clear: 'Clear Filter',
+                no_results: 'No areas found matching your filter.',
+
+                area: {
+                    area_actions: {
+                        title: 'Area Actions',
+                        edit_name: 'Edit Name',
+                        delete_area: 'Delete Area',
+                    },
+                },
+                empty_state: {
+                    title: 'No areas',
+                    description: 'Create an area to get started',
+                },
+            },
+            // TODO: Translate
+            custom_types_section: {
+                custom_types: 'Custom Types',
+                filter: 'Filter',
+                clear: 'Clear Filter',
+                no_results: 'No custom types found matching your filter.',
+                empty_state: {
+                    title: 'No custom types',
+                    description:
+                        'Custom types will appear here when they are available in your database',
+                },
+                custom_type: {
+                    kind: 'Kind',
+                    enum_values: 'Enum Values',
+                    composite_fields: 'Fields',
+                    no_fields: 'No fields defined',
+                    no_values: '정의된 열거형 값이 없습니다',
+                    field_name_placeholder: 'Field name',
+                    field_type_placeholder: 'Select type',
+                    add_field: 'Add Field',
+                    no_fields_tooltip: 'No fields defined for this custom type',
+                    custom_type_actions: {
+                        title: 'Actions',
+                        highlight_fields: 'Highlight Fields',
+                        delete_custom_type: 'Delete',
+                        clear_field_highlight: 'Clear Highlight',
+                    },
+                    delete_custom_type: 'Delete Type',
                 },
             },
         },
@@ -221,8 +271,14 @@ export const ko_KR: LanguageTranslation = {
             show_all: '전체 저장',
             undo: '실행 취소',
             redo: '다시 실행',
-            reorder_diagram: '다이어그램 재정렬',
+            reorder_diagram: '다이어그램 자동 정렬',
+            // TODO: Translate
+            clear_custom_type_highlight: 'Clear highlight for "{{typeName}}"',
+            custom_type_highlight_tooltip:
+                'Highlighting "{{typeName}}" - Click to clear',
             highlight_overlapping_tables: '겹치는 테이블 강조 표시',
+            // TODO: Translate
+            filter: 'Filter Tables',
         },
 
         new_diagram_dialog: {
@@ -238,7 +294,7 @@ export const ko_KR: LanguageTranslation = {
                 title: '당신의 데이터베이스를 가져오세요',
                 database_edition: '데이터베이스 세부 종류:',
                 step_1: '데이터베이스에서 아래의 SQL을 실행해주세요:',
-                step_2: '이곳에 결과를 붙여넣어주세요:',
+                step_2: '이곳에 결과를 붙여넣어주세요 →',
                 script_results_placeholder: '이곳에 스크립트 결과를 입력...',
                 ssms_instructions: {
                     button_text: 'SSMS을 사용하시는 경우',
@@ -259,7 +315,7 @@ export const ko_KR: LanguageTranslation = {
         },
 
         open_diagram_dialog: {
-            title: '다이어그램 열기',
+            title: '데이터베이스 열기',
             description: '아래의 목록에서 다이어그램을 선택하세요.',
             table_columns: {
                 name: '이름',
@@ -269,6 +325,12 @@ export const ko_KR: LanguageTranslation = {
             },
             cancel: '취소',
             open: '열기',
+
+            diagram_actions: {
+                open: '열기',
+                duplicate: '복제',
+                delete: '삭제',
+            },
         },
 
         export_sql_dialog: {
@@ -331,6 +393,12 @@ export const ko_KR: LanguageTranslation = {
             scale_4x: '4x',
             cancel: '취소',
             export: '내보내기',
+            // TODO: Translate
+            advanced_options: 'Advanced Options',
+            pattern: 'Include background pattern',
+            pattern_description: 'Add subtle grid pattern to background.',
+            transparent: 'Transparent background',
+            transparent_description: 'Remove background color from image.',
         },
 
         new_table_schema_dialog: {
@@ -346,6 +414,14 @@ export const ko_KR: LanguageTranslation = {
             description: '"{{tableName}}" 테이블 스키마를 수정합니다',
             cancel: '취소',
             confirm: '변경',
+        },
+
+        create_table_schema_dialog: {
+            title: '새 스키마 생성',
+            description:
+                '아직 스키마가 없습니다. 테이블을 정리하기 위해 첫 번째 스키마를 생성하세요.',
+            create: '생성',
+            cancel: '취소',
         },
 
         star_us_dialog: {
@@ -364,7 +440,7 @@ export const ko_KR: LanguageTranslation = {
             error: {
                 title: '다이어그램 내보내기 오류',
                 description:
-                    '무언가 문제가 발생하였습니다. 도움이 필요하신 경우 chartdb.io@gmail.com으로 연락해주세요.',
+                    '무언가 문제가 발생하였습니다. 도움이 필요하신 경우 support@chartdb.io으로 연락해주세요.',
             },
         },
         import_diagram_dialog: {
@@ -375,7 +451,7 @@ export const ko_KR: LanguageTranslation = {
             error: {
                 title: '다이어그램 가져오기 오류',
                 description:
-                    '다이어그램 JSON이 유효하지 않습니다. JSON이 올바른 형식인지 확인해주세요. 도움이 필요하신 경우 chartdb.io@gmail.com으로 연락해주세요.',
+                    '다이어그램 JSON이 유효하지 않습니다. JSON이 올바른 형식인지 확인해주세요. 도움이 필요하신 경우 support@chartdb.io으로 연락해주세요.',
             },
         },
         // TODO: Translate
@@ -401,7 +477,10 @@ export const ko_KR: LanguageTranslation = {
 
         canvas_context_menu: {
             new_table: '새 테이블',
+            new_view: '새 뷰',
             new_relationship: '새 연관관계',
+            // TODO: Translate
+            new_area: 'New Area',
         },
 
         table_node_context_menu: {
@@ -420,6 +499,9 @@ export const ko_KR: LanguageTranslation = {
         language_select: {
             change_language: '언어',
         },
+
+        on: '켜기',
+        off: '끄기',
     },
 };
 

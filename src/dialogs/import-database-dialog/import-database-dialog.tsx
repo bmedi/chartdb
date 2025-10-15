@@ -6,13 +6,17 @@ import { ImportDatabase } from '../common/import-database/import-database';
 import type { DatabaseEdition } from '@/lib/domain/database-edition';
 import type { DatabaseMetadata } from '@/lib/data/import-metadata/metadata-types/database-metadata';
 import { loadDatabaseMetadata } from '@/lib/data/import-metadata/metadata-types/database-metadata';
-import { loadFromDatabaseMetadata } from '@/lib/domain/diagram';
+import type { Diagram } from '@/lib/domain/diagram';
+import { loadFromDatabaseMetadata } from '@/lib/data/import-metadata/import';
 import { useChartDB } from '@/hooks/use-chartdb';
 import { useRedoUndoStack } from '@/hooks/use-redo-undo-stack';
 import { Trans, useTranslation } from 'react-i18next';
 import { useReactFlow } from '@xyflow/react';
 import type { BaseDialogProps } from '../common/base-dialog-props';
 import { useAlert } from '@/context/alert-context/alert-context';
+import { sqlImportToDiagram } from '@/lib/data/sql-import';
+import { importDBMLToDiagram } from '@/lib/dbml/dbml-import/dbml-import';
+import type { ImportMethod } from '@/lib/import-method/import-method';
 
 export interface ImportDatabaseDialogProps extends BaseDialogProps {
     databaseType: DatabaseType;
@@ -22,6 +26,7 @@ export const ImportDatabaseDialog: React.FC<ImportDatabaseDialogProps> = ({
     dialog,
     databaseType,
 }) => {
+    const [importMethod, setImportMethod] = useState<ImportMethod>('query');
     const { closeImportDatabaseDialog } = useDialog();
     const { showAlert } = useAlert();
     const {
@@ -54,17 +59,31 @@ export const ImportDatabaseDialog: React.FC<ImportDatabaseDialogProps> = ({
     }, [dialog.open]);
 
     const importDatabase = useCallback(async () => {
-        const databaseMetadata: DatabaseMetadata =
-            loadDatabaseMetadata(scriptResult);
+        let diagram: Diagram | undefined;
 
-        const diagram = await loadFromDatabaseMetadata({
-            databaseType,
-            databaseMetadata,
-            databaseEdition:
-                databaseEdition?.trim().length === 0
-                    ? undefined
-                    : databaseEdition,
-        });
+        if (importMethod === 'ddl') {
+            diagram = await sqlImportToDiagram({
+                sqlContent: scriptResult,
+                sourceDatabaseType: databaseType,
+                targetDatabaseType: databaseType,
+            });
+        } else if (importMethod === 'dbml') {
+            diagram = await importDBMLToDiagram(scriptResult, {
+                databaseType,
+            });
+        } else {
+            const databaseMetadata: DatabaseMetadata =
+                loadDatabaseMetadata(scriptResult);
+
+            diagram = await loadFromDatabaseMetadata({
+                databaseType,
+                databaseMetadata,
+                databaseEdition:
+                    databaseEdition?.trim().length === 0
+                        ? undefined
+                        : databaseEdition,
+            });
+        }
 
         const tableIdsToRemove = tables
             .filter((table) =>
@@ -308,6 +327,7 @@ export const ImportDatabaseDialog: React.FC<ImportDatabaseDialogProps> = ({
 
         closeImportDatabaseDialog();
     }, [
+        importMethod,
         databaseEdition,
         currentDatabaseType,
         updateDatabaseType,
@@ -337,7 +357,7 @@ export const ImportDatabaseDialog: React.FC<ImportDatabaseDialogProps> = ({
             }}
         >
             <DialogContent
-                className="flex max-h-screen w-[90vw] flex-col overflow-y-auto md:overflow-visible xl:min-w-[45vw]"
+                className="flex max-h-screen w-full flex-col md:max-w-[900px]"
                 showClose
             >
                 <ImportDatabase
@@ -349,6 +369,8 @@ export const ImportDatabaseDialog: React.FC<ImportDatabaseDialogProps> = ({
                     setScriptResult={setScriptResult}
                     keepDialogAfterImport
                     title={t('import_database_dialog.title', { diagramName })}
+                    importMethod={importMethod}
+                    setImportMethod={setImportMethod}
                 />
             </DialogContent>
         </Dialog>

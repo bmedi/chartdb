@@ -10,25 +10,36 @@ export const LayoutProvider: React.FC<React.PropsWithChildren> = ({
     const [openedTableInSidebar, setOpenedTableInSidebar] = React.useState<
         string | undefined
     >();
-    const [openedRelationshipInSidebar, setOpenedRelationshipInSidebar] =
-        React.useState<string | undefined>();
-    const [openedDependencyInSidebar, setOpenedDependencyInSidebar] =
+    const [openedRefInSidebar, setOpenedRefInSidebar] = React.useState<
+        string | undefined
+    >();
+    const [openedAreaInSidebar, setOpenedAreaInSidebar] = React.useState<
+        string | undefined
+    >();
+    const [openedCustomTypeInSidebar, setOpenedCustomTypeInSidebar] =
         React.useState<string | undefined>();
     const [selectedSidebarSection, setSelectedSidebarSection] =
         React.useState<SidebarSection>('tables');
     const [isSidePanelShowed, setIsSidePanelShowed] =
         React.useState<boolean>(isDesktop);
-    const [isSelectSchemaOpen, setIsSelectSchemaOpen] =
-        React.useState<boolean>(false);
 
     const closeAllTablesInSidebar: LayoutContext['closeAllTablesInSidebar'] =
         () => setOpenedTableInSidebar('');
 
     const closeAllRelationshipsInSidebar: LayoutContext['closeAllRelationshipsInSidebar'] =
-        () => setOpenedRelationshipInSidebar('');
+        () => setOpenedRefInSidebar('');
 
     const closeAllDependenciesInSidebar: LayoutContext['closeAllDependenciesInSidebar'] =
-        () => setOpenedDependencyInSidebar('');
+        () => setOpenedRefInSidebar('');
+
+    const closeAllRefsInSidebar: LayoutContext['closeAllRefsInSidebar'] = () =>
+        setOpenedRefInSidebar('');
+
+    const closeAllAreasInSidebar: LayoutContext['closeAllAreasInSidebar'] =
+        () => setOpenedAreaInSidebar('');
+
+    const closeAllCustomTypesInSidebar: LayoutContext['closeAllCustomTypesInSidebar'] =
+        () => setOpenedCustomTypeInSidebar('');
 
     const hideSidePanel: LayoutContext['hideSidePanel'] = () =>
         setIsSidePanelShowed(false);
@@ -51,22 +62,38 @@ export const LayoutProvider: React.FC<React.PropsWithChildren> = ({
     const openRelationshipFromSidebar: LayoutContext['openRelationshipFromSidebar'] =
         (relationshipId) => {
             showSidePanel();
-            setSelectedSidebarSection('relationships');
-            setOpenedRelationshipInSidebar(relationshipId);
+            setSelectedSidebarSection('refs');
+            setOpenedRefInSidebar(relationshipId);
         };
 
     const openDependencyFromSidebar: LayoutContext['openDependencyFromSidebar'] =
         (dependencyId) => {
             showSidePanel();
-            setSelectedSidebarSection('dependencies');
-            setOpenedDependencyInSidebar(dependencyId);
+            setSelectedSidebarSection('refs');
+            setOpenedRefInSidebar(dependencyId);
         };
 
-    const openSelectSchema: LayoutContext['openSelectSchema'] = () =>
-        setIsSelectSchemaOpen(true);
+    const openRefFromSidebar: LayoutContext['openRefFromSidebar'] = (refId) => {
+        showSidePanel();
+        setSelectedSidebarSection('refs');
+        setOpenedRefInSidebar(refId);
+    };
 
-    const closeSelectSchema: LayoutContext['closeSelectSchema'] = () =>
-        setIsSelectSchemaOpen(false);
+    const openAreaFromSidebar: LayoutContext['openAreaFromSidebar'] = (
+        areaId
+    ) => {
+        showSidePanel();
+        setSelectedSidebarSection('areas');
+        setOpenedAreaInSidebar(areaId);
+    };
+
+    const openCustomTypeFromSidebar: LayoutContext['openCustomTypeFromSidebar'] =
+        (customTypeId) => {
+            showSidePanel();
+            setSelectedSidebarSection('customTypes');
+            setOpenedTableInSidebar(customTypeId);
+        };
+
     return (
         <layoutContext.Provider
             value={{
@@ -74,7 +101,6 @@ export const LayoutProvider: React.FC<React.PropsWithChildren> = ({
                 selectedSidebarSection,
                 openTableFromSidebar,
                 selectSidebarSection: setSelectedSidebarSection,
-                openedRelationshipInSidebar,
                 openRelationshipFromSidebar,
                 closeAllTablesInSidebar,
                 closeAllRelationshipsInSidebar,
@@ -82,12 +108,17 @@ export const LayoutProvider: React.FC<React.PropsWithChildren> = ({
                 hideSidePanel,
                 showSidePanel,
                 toggleSidePanel,
-                isSelectSchemaOpen,
-                openSelectSchema,
-                closeSelectSchema,
-                openedDependencyInSidebar,
                 openDependencyFromSidebar,
                 closeAllDependenciesInSidebar,
+                openedRefInSidebar,
+                openRefFromSidebar,
+                closeAllRefsInSidebar,
+                openedAreaInSidebar,
+                openAreaFromSidebar,
+                closeAllAreasInSidebar,
+                openedCustomTypeInSidebar,
+                openCustomTypeFromSidebar,
+                closeAllCustomTypesInSidebar,
             }}
         >
             {children}

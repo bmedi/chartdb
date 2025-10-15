@@ -2,17 +2,25 @@ import type { LanguageMetadata, LanguageTranslation } from '../types';
 
 export const uk: LanguageTranslation = {
     translation: {
+        editor_sidebar: {
+            new_diagram: 'Нова',
+            browse: 'Огляд',
+            tables: 'Таблиці',
+            refs: 'Зв’язки',
+            areas: 'Області',
+            dependencies: 'Залежності',
+            custom_types: 'Користувацькі типи',
+        },
         menu: {
-            file: {
-                file: 'Файл',
-                new: 'Новий',
-                open: 'Відкрити',
+            actions: {
+                actions: 'Дії',
+                new: 'Нова...',
+                browse: 'Огляд...',
                 save: 'Зберегти',
                 import: 'Імпорт бази даних',
                 export_sql: 'Експорт SQL',
                 export_as: 'Експортувати як',
-                delete_diagram: 'Видалити діаграму',
-                exit: 'Вийти',
+                delete_diagram: 'Видалити',
             },
             edit: {
                 edit: 'Редагувати',
@@ -26,7 +34,10 @@ export const uk: LanguageTranslation = {
                 hide_sidebar: 'Приховати бічну панель',
                 hide_cardinality: 'Приховати потужність',
                 show_cardinality: 'Показати кардинальність',
+                show_field_attributes: 'Показати атрибути полів',
+                hide_field_attributes: 'Приховати атрибути полів',
                 zoom_on_scroll: 'Масштабувати прокручуванням',
+                show_views: 'Представлення бази даних',
                 theme: 'Тема',
                 show_dependencies: 'Показати залежності',
                 hide_dependencies: 'Приховати залежності',
@@ -41,9 +52,7 @@ export const uk: LanguageTranslation = {
             help: {
                 help: 'Довідка',
                 docs_website: 'Документація',
-                visit_website: 'Сайт ChartDB',
                 join_discord: 'Приєднуйтесь до нас в Діскорд',
-                schedule_a_call: 'Забронювати зустріч!',
             },
         },
 
@@ -64,20 +73,11 @@ export const uk: LanguageTranslation = {
         },
 
         reorder_diagram_alert: {
-            title: 'Перевпорядкувати діаграму',
+            title: 'Автоматичне розміщення діаграми',
             description:
                 'Ця дія перевпорядкує всі таблиці на діаграмі. Хочете продовжити?',
-            reorder: 'Перевпорядкувати',
+            reorder: 'Автоматичне розміщення',
             cancel: 'Скасувати',
-        },
-
-        multiple_schemas_alert: {
-            title: 'Кілька схем',
-            description:
-                '{{schemasCount}} схеми на цій діаграмі. Зараз відображається: {{formattedSchemas}}.',
-            dont_show_again: 'Більше не показувати',
-            change_schema: 'Зміна',
-            none: 'немає',
         },
 
         copy_to_clipboard_toast: {
@@ -114,14 +114,11 @@ export const uk: LanguageTranslation = {
         copied: 'Скопійовано!',
 
         side_panel: {
-            schema: 'Схема:',
-            filter_by_schema: 'Фільтрувати за схемою',
-            search_schema: 'Пошук схеми…',
-            no_schemas_found: 'Схеми не знайдено.',
             view_all_options: 'Переглянути всі параметри…',
             tables_section: {
                 tables: 'Таблиці',
                 add_table: 'Додати таблицю',
+                add_view: 'Додати представлення',
                 filter: 'Фільтр',
                 collapse: 'Згорнути все',
                 // TODO: Translate
@@ -147,16 +144,23 @@ export const uk: LanguageTranslation = {
                     field_actions: {
                         title: 'Атрибути полів',
                         unique: 'Унікальне',
+                        auto_increment: 'Автоінкремент',
                         comments: 'Коментарі',
                         no_comments: 'Немає коментарів',
                         delete_field: 'Видалити поле',
                         // TODO: Translate
+                        default_value: 'Default Value',
+                        no_default: 'No default',
+                        // TODO: Translate
                         character_length: 'Max Length',
+                        precision: 'Точність',
+                        scale: 'Масштаб',
                     },
                     index_actions: {
                         title: 'Атрибути індексу',
                         name: 'Назва індекса',
                         unique: 'Унікальний',
+                        index_type: 'Тип індексу',
                         delete_index: 'Видалити індекс',
                     },
                     table_actions: {
@@ -173,12 +177,15 @@ export const uk: LanguageTranslation = {
                     description: 'Щоб почати, створіть таблицю',
                 },
             },
-            relationships_section: {
-                relationships: 'Звʼязки',
+            refs_section: {
+                refs: 'Refs',
                 filter: 'Фільтр',
-                add_relationship: 'Додати звʼязок',
                 collapse: 'Згорнути все',
+                add_relationship: 'Додати звʼязок',
+                relationships: 'Звʼязки',
+                dependencies: 'Залежності',
                 relationship: {
+                    relationship: 'Звʼязок',
                     primary: 'Первинна таблиця',
                     foreign: 'Посилання на таблицю',
                     cardinality: 'Звʼязок',
@@ -188,16 +195,8 @@ export const uk: LanguageTranslation = {
                         delete_relationship: 'Видалити',
                     },
                 },
-                empty_state: {
-                    title: 'Звʼязків немає',
-                    description: 'Створіть звʼязок для зʼєднання таблиць',
-                },
-            },
-            dependencies_section: {
-                dependencies: 'Залежності',
-                filter: 'Фільтр',
-                collapse: 'Згорнути все',
                 dependency: {
+                    dependency: 'Залежність',
                     table: 'Таблиця',
                     dependent_table: 'Залежне подання',
                     delete_dependency: 'Видалити',
@@ -207,8 +206,59 @@ export const uk: LanguageTranslation = {
                     },
                 },
                 empty_state: {
-                    title: 'Жодних залежностей',
-                    description: 'Створіть подання, щоб почати',
+                    title: 'Жодних зв’язків',
+                    description: 'Створіть зв’язок, щоб почати',
+                },
+            },
+
+            // TODO: Translate
+            areas_section: {
+                areas: 'Areas',
+                add_area: 'Add Area',
+                filter: 'Filter',
+                clear: 'Clear Filter',
+                no_results: 'No areas found matching your filter.',
+
+                area: {
+                    area_actions: {
+                        title: 'Area Actions',
+                        edit_name: 'Edit Name',
+                        delete_area: 'Delete Area',
+                    },
+                },
+                empty_state: {
+                    title: 'No areas',
+                    description: 'Create an area to get started',
+                },
+            },
+            // TODO: Translate
+            custom_types_section: {
+                custom_types: 'Custom Types',
+                filter: 'Filter',
+                clear: 'Clear Filter',
+                no_results: 'No custom types found matching your filter.',
+                empty_state: {
+                    title: 'No custom types',
+                    description:
+                        'Custom types will appear here when they are available in your database',
+                },
+                custom_type: {
+                    kind: 'Kind',
+                    enum_values: 'Enum Values',
+                    composite_fields: 'Fields',
+                    no_fields: 'No fields defined',
+                    no_values: 'Значення переліку не визначені',
+                    field_name_placeholder: 'Field name',
+                    field_type_placeholder: 'Select type',
+                    add_field: 'Add Field',
+                    no_fields_tooltip: 'No fields defined for this custom type',
+                    custom_type_actions: {
+                        title: 'Actions',
+                        highlight_fields: 'Highlight Fields',
+                        delete_custom_type: 'Delete',
+                        clear_field_highlight: 'Clear Highlight',
+                    },
+                    delete_custom_type: 'Delete Type',
                 },
             },
         },
@@ -220,8 +270,14 @@ export const uk: LanguageTranslation = {
             show_all: 'Показати все',
             undo: 'Скасувати',
             redo: 'Повторити',
-            reorder_diagram: 'Перевпорядкувати діаграму',
+            reorder_diagram: 'Автоматичне розміщення діаграми',
+            // TODO: Translate
+            clear_custom_type_highlight: 'Clear highlight for "{{typeName}}"',
+            custom_type_highlight_tooltip:
+                'Highlighting "{{typeName}}" - Click to clear',
             highlight_overlapping_tables: 'Показати таблиці, що перекриваються',
+            // TODO: Translate
+            filter: 'Filter Tables',
         },
 
         new_diagram_dialog: {
@@ -237,7 +293,7 @@ export const uk: LanguageTranslation = {
                 title: 'Імпортуйте вашу базу даних',
                 database_edition: 'Варіант бази даних:',
                 step_1: 'Запустіть цей сценарій у своїй базі даних:',
-                step_2: 'Вставте сюди результат сценарію:',
+                step_2: 'Вставте сюди результат сценарію →',
                 script_results_placeholder: 'Результати сценарію має бути тут…',
                 ssms_instructions: {
                     button_text: 'SSMS Інструкції',
@@ -258,7 +314,7 @@ export const uk: LanguageTranslation = {
         },
 
         open_diagram_dialog: {
-            title: 'Відкрити діаграму',
+            title: 'Відкрити базу даних',
             description:
                 'Виберіть діаграму, яку потрібно відкрити, зі списку нижче.',
             table_columns: {
@@ -269,6 +325,12 @@ export const uk: LanguageTranslation = {
             },
             cancel: 'Скасувати',
             open: 'Відкрити',
+
+            diagram_actions: {
+                open: 'Відкрити',
+                duplicate: 'Дублювати',
+                delete: 'Видалити',
+            },
         },
 
         export_sql_dialog: {
@@ -332,6 +394,12 @@ export const uk: LanguageTranslation = {
             scale_4x: '4x',
             cancel: 'Скасувати',
             export: 'Експортувати',
+            // TODO: Translate
+            advanced_options: 'Advanced Options',
+            pattern: 'Include background pattern',
+            pattern_description: 'Add subtle grid pattern to background.',
+            transparent: 'Transparent background',
+            transparent_description: 'Remove background color from image.',
         },
 
         new_table_schema_dialog: {
@@ -349,6 +417,14 @@ export const uk: LanguageTranslation = {
             confirm: 'Змінити',
         },
 
+        create_table_schema_dialog: {
+            title: 'Створити нову схему',
+            description:
+                'Поки що не існує жодної схеми. Створіть свою першу схему, щоб організувати ваші таблиці.',
+            create: 'Створити',
+            cancel: 'Скасувати',
+        },
+
         star_us_dialog: {
             title: 'Допоможіть нам покращитися!',
             description: 'Поставне на зірку на GitHub? Це лише один клік!',
@@ -364,7 +440,7 @@ export const uk: LanguageTranslation = {
             error: {
                 title: 'Помилка експорут діаграми',
                 description:
-                    'Щось пішло не так. Потрібна допомога? chartdb.io@gmail.com',
+                    'Щось пішло не так. Потрібна допомога? support@chartdb.io',
             },
         },
         import_diagram_dialog: {
@@ -375,7 +451,7 @@ export const uk: LanguageTranslation = {
             error: {
                 title: 'Помилка імпорту діаграми',
                 description:
-                    'JSON діаграми є неправильним. Будь ласка, перевірте JSON і спробуйте ще раз. Потрібна допомога? chartdb.io@gmail.com',
+                    'JSON діаграми є неправильним. Будь ласка, перевірте JSON і спробуйте ще раз. Потрібна допомога? support@chartdb.io',
             },
         },
         // TODO: Translate
@@ -401,7 +477,10 @@ export const uk: LanguageTranslation = {
 
         canvas_context_menu: {
             new_table: 'Нова таблиця',
+            new_view: 'Нове представлення',
             new_relationship: 'Новий звʼязок',
+            // TODO: Translate
+            new_area: 'New Area',
         },
 
         table_node_context_menu: {
@@ -420,6 +499,9 @@ export const uk: LanguageTranslation = {
         language_select: {
             change_language: 'Мова',
         },
+
+        on: 'Увімк',
+        off: 'Вимк',
     },
 };
 

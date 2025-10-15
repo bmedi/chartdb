@@ -1,7 +1,14 @@
 import type { Cardinality } from '@/lib/domain/db-relationship';
-import { MIN_TABLE_SIZE, type TableNodeType } from './table-node/table-node';
+import { type TableNodeType } from './table-node/table-node';
 import { addEdge, createGraph, removeEdge, type Graph } from '@/lib/graph';
-import type { DBTable } from '@/lib/domain/db-table';
+import {
+    getTableDimensions,
+    calcTableHeight,
+    type DBTable,
+    MIN_TABLE_SIZE,
+} from '@/lib/domain/db-table';
+
+export { calcTableHeight, getTableDimensions };
 
 export const getCardinalityMarkerId = ({
     cardinality,
@@ -27,9 +34,8 @@ const calcRect = ({
         table?.width ??
         MIN_TABLE_SIZE;
     const height = node
-        ? (node?.measured?.height ??
-          calcTableHeight(node?.data.table.fields.length ?? 0))
-        : calcTableHeight(table?.fields.length ?? 0);
+        ? (node?.measured?.height ?? calcTableHeight(node.data.table))
+        : calcTableHeight(table);
 
     return {
         id,
@@ -106,19 +112,4 @@ export const findOverlappingTables = ({
     }
 
     return graph;
-};
-
-export const calcTableHeight = (fieldCount: number): number => {
-    const fieldHeight = 32; // h-8 per field
-
-    return Math.min(fieldCount, 11) * fieldHeight + 48;
-};
-
-export const getTableDimensions = (
-    table: DBTable
-): { width: number; height: number } => {
-    const fieldCount = table.fields.length;
-    const height = calcTableHeight(fieldCount);
-    const width = table.width || MIN_TABLE_SIZE;
-    return { width, height };
 };

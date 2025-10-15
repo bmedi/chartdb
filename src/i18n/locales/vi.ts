@@ -2,17 +2,25 @@ import type { LanguageMetadata, LanguageTranslation } from '../types';
 
 export const vi: LanguageTranslation = {
     translation: {
+        editor_sidebar: {
+            new_diagram: 'Mới',
+            browse: 'Duyệt',
+            tables: 'Bảng',
+            refs: 'Refs',
+            areas: 'Khu vực',
+            dependencies: 'Phụ thuộc',
+            custom_types: 'Kiểu tùy chỉnh',
+        },
         menu: {
-            file: {
-                file: 'Tệp',
-                new: 'Tạo mới',
-                open: 'Mở',
+            actions: {
+                actions: 'Hành động',
+                new: 'Mới...',
+                browse: 'Duyệt...',
                 save: 'Lưu',
                 import: 'Nhập cơ sở dữ liệu',
                 export_sql: 'Xuất SQL',
                 export_as: 'Xuất thành',
-                delete_diagram: 'Xóa sơ đồ',
-                exit: 'Thoát',
+                delete_diagram: 'Xóa',
             },
             edit: {
                 edit: 'Sửa',
@@ -26,7 +34,10 @@ export const vi: LanguageTranslation = {
                 hide_sidebar: 'Ẩn thanh bên',
                 hide_cardinality: 'Ẩn số lượng',
                 show_cardinality: 'Hiển thị số lượng',
+                show_field_attributes: 'Hiển thị thuộc tính trường',
+                hide_field_attributes: 'Ẩn thuộc tính trường',
                 zoom_on_scroll: 'Thu phóng khi cuộn',
+                show_views: 'Chế độ xem Cơ sở dữ liệu',
                 theme: 'Chủ đề',
                 show_dependencies: 'Hiển thị các phụ thuộc',
                 hide_dependencies: 'Ẩn các phụ thuộc',
@@ -42,9 +53,7 @@ export const vi: LanguageTranslation = {
             help: {
                 help: 'Trợ giúp',
                 docs_website: 'Tài liệu',
-                visit_website: 'Truy cập ChartDB',
                 join_discord: 'Tham gia Discord',
-                schedule_a_call: 'Trò chuyện cùng chúng tôi!',
             },
         },
 
@@ -65,20 +74,11 @@ export const vi: LanguageTranslation = {
         },
 
         reorder_diagram_alert: {
-            title: 'Sắp xếp lại sơ đồ',
+            title: 'Tự động sắp xếp sơ đồ',
             description:
                 'Hành động này sẽ sắp xếp lại tất cả các bảng trong sơ đồ. Bạn có muốn tiếp tục không?',
-            reorder: 'Sắp xếp',
+            reorder: 'Tự động sắp xếp',
             cancel: 'Hủy',
-        },
-
-        multiple_schemas_alert: {
-            title: 'Có nhiều lược đồ',
-            description:
-                'Có {{schemasCount}} lược đồ trong sơ đồ này. Hiện đang hiển thị: {{formattedSchemas}}.',
-            dont_show_again: 'Không hiển thị lại',
-            change_schema: 'Thay đổi',
-            none: 'không có',
         },
 
         copy_to_clipboard_toast: {
@@ -115,14 +115,11 @@ export const vi: LanguageTranslation = {
         copied: 'Đã sao chép!',
 
         side_panel: {
-            schema: 'Lược đồ:',
-            filter_by_schema: 'Lọc bởi lược đồ',
-            search_schema: 'Tìm kiếm lược đồ...',
-            no_schemas_found: 'Không tìm thấy lược đồ.',
             view_all_options: 'Xem tất cả tùy chọn...',
             tables_section: {
                 tables: 'Bảng',
                 add_table: 'Thêm bảng',
+                add_view: 'Thêm Chế độ xem',
                 filter: 'Lọc',
                 collapse: 'Thu gọn tất cả',
                 // TODO: Translate
@@ -148,16 +145,23 @@ export const vi: LanguageTranslation = {
                     field_actions: {
                         title: 'Thuộc tính trường',
                         unique: 'Giá trị duy nhất',
+                        auto_increment: 'Tự động tăng',
                         comments: 'Bình luận',
                         no_comments: 'Không có bình luận',
                         delete_field: 'Xóa trường',
                         // TODO: Translate
+                        default_value: 'Default Value',
+                        no_default: 'No default',
+                        // TODO: Translate
                         character_length: 'Max Length',
+                        precision: 'Độ chính xác',
+                        scale: 'Tỷ lệ',
                     },
                     index_actions: {
                         title: 'Thuộc tính chỉ mục',
                         name: 'Tên',
                         unique: 'Giá trị duy nhất',
+                        index_type: 'Loại chỉ mục',
                         delete_index: 'Xóa chỉ mục',
                     },
                     table_actions: {
@@ -174,12 +178,15 @@ export const vi: LanguageTranslation = {
                     description: 'Tạo một bảng để bắt đầu',
                 },
             },
-            relationships_section: {
-                relationships: 'Quan hệ',
+            refs_section: {
+                refs: 'Refs',
                 filter: 'Lọc',
-                add_relationship: 'Thêm quan hệ',
                 collapse: 'Thu gọn tất cả',
+                add_relationship: 'Thêm quan hệ',
+                relationships: 'Quan hệ',
+                dependencies: 'Phụ thuộc',
                 relationship: {
+                    relationship: 'Quan hệ',
                     primary: 'Bảng khóa chính',
                     foreign: 'Bảng khóa ngoại',
                     cardinality: 'Quan hệ',
@@ -189,16 +196,8 @@ export const vi: LanguageTranslation = {
                         delete_relationship: 'Xóa',
                     },
                 },
-                empty_state: {
-                    title: 'Không có quan hệ',
-                    description: 'Tạo quan hệ để kết nối các bảng',
-                },
-            },
-            dependencies_section: {
-                dependencies: 'Phụ thuộc',
-                filter: 'Lọc',
-                collapse: 'Thu gọn tất cả',
                 dependency: {
+                    dependency: 'Phụ thuộc',
                     table: 'Bảng',
                     dependent_table: 'Bảng xem phụ thuộc',
                     delete_dependency: 'Xóa',
@@ -208,8 +207,59 @@ export const vi: LanguageTranslation = {
                     },
                 },
                 empty_state: {
-                    title: 'Không có phụ thuộc',
-                    description: 'Tạo bảng xem phụ thuộc để bắt đầu',
+                    title: 'Không có quan hệ',
+                    description: 'Tạo một quan hệ để bắt đầu',
+                },
+            },
+
+            // TODO: Translate
+            areas_section: {
+                areas: 'Areas',
+                add_area: 'Add Area',
+                filter: 'Filter',
+                clear: 'Clear Filter',
+                no_results: 'No areas found matching your filter.',
+
+                area: {
+                    area_actions: {
+                        title: 'Area Actions',
+                        edit_name: 'Edit Name',
+                        delete_area: 'Delete Area',
+                    },
+                },
+                empty_state: {
+                    title: 'No areas',
+                    description: 'Create an area to get started',
+                },
+            },
+            // TODO: Translate
+            custom_types_section: {
+                custom_types: 'Custom Types',
+                filter: 'Filter',
+                clear: 'Clear Filter',
+                no_results: 'No custom types found matching your filter.',
+                empty_state: {
+                    title: 'No custom types',
+                    description:
+                        'Custom types will appear here when they are available in your database',
+                },
+                custom_type: {
+                    kind: 'Kind',
+                    enum_values: 'Enum Values',
+                    composite_fields: 'Fields',
+                    no_fields: 'No fields defined',
+                    no_values: 'Không có giá trị enum được định nghĩa',
+                    field_name_placeholder: 'Field name',
+                    field_type_placeholder: 'Select type',
+                    add_field: 'Add Field',
+                    no_fields_tooltip: 'No fields defined for this custom type',
+                    custom_type_actions: {
+                        title: 'Actions',
+                        highlight_fields: 'Highlight Fields',
+                        delete_custom_type: 'Delete',
+                        clear_field_highlight: 'Clear Highlight',
+                    },
+                    delete_custom_type: 'Delete Type',
                 },
             },
         },
@@ -221,8 +271,14 @@ export const vi: LanguageTranslation = {
             show_all: 'Hiển thị tất cả',
             undo: 'Hoàn tác',
             redo: 'Làm lại',
-            reorder_diagram: 'Sắp xếp lại sơ đồ',
+            reorder_diagram: 'Tự động sắp xếp sơ đồ',
+            // TODO: Translate
+            clear_custom_type_highlight: 'Clear highlight for "{{typeName}}"',
+            custom_type_highlight_tooltip:
+                'Highlighting "{{typeName}}" - Click to clear',
             highlight_overlapping_tables: 'Làm nổi bật các bảng chồng chéo',
+            // TODO: Translate
+            filter: 'Filter Tables',
         },
 
         new_diagram_dialog: {
@@ -238,7 +294,7 @@ export const vi: LanguageTranslation = {
                 title: 'Nhập cơ sở dữ liệu của bạn',
                 database_edition: 'Loại:',
                 step_1: 'Chạy lệnh này trong cơ sở dữ liệu của bạn:',
-                step_2: 'Dán kết quả vào đây:',
+                step_2: 'Dán kết quả vào đây →',
                 script_results_placeholder: 'Kết quả...',
                 ssms_instructions: {
                     button_text: 'Hướng dẫn SSMS',
@@ -259,7 +315,7 @@ export const vi: LanguageTranslation = {
         },
 
         open_diagram_dialog: {
-            title: 'Mở sơ đồ',
+            title: 'Mở cơ sở dữ liệu',
             description: 'Chọn sơ đồ để mở từ danh sách bên dưới.',
             table_columns: {
                 name: 'Tên',
@@ -269,6 +325,12 @@ export const vi: LanguageTranslation = {
             },
             cancel: 'Hủy',
             open: 'Mở',
+
+            diagram_actions: {
+                open: 'Mở',
+                duplicate: 'Nhân bản',
+                delete: 'Xóa',
+            },
         },
 
         export_sql_dialog: {
@@ -331,6 +393,12 @@ export const vi: LanguageTranslation = {
             scale_4x: '4x',
             cancel: 'Hủy',
             export: 'Xuất',
+            // TODO: Translate
+            advanced_options: 'Advanced Options',
+            pattern: 'Include background pattern',
+            pattern_description: 'Add subtle grid pattern to background.',
+            transparent: 'Transparent background',
+            transparent_description: 'Remove background color from image.',
         },
 
         new_table_schema_dialog: {
@@ -346,6 +414,14 @@ export const vi: LanguageTranslation = {
             description: 'Cập nhật lược đồ bảng "{{tableName}}"',
             cancel: 'Hủy',
             confirm: 'Xác nhận',
+        },
+
+        create_table_schema_dialog: {
+            title: 'Tạo lược đồ mới',
+            description:
+                'Chưa có lược đồ nào. Tạo lược đồ đầu tiên của bạn để tổ chức các bảng.',
+            create: 'Tạo',
+            cancel: 'Hủy',
         },
 
         star_us_dialog: {
@@ -364,7 +440,7 @@ export const vi: LanguageTranslation = {
             error: {
                 title: 'Lỗi khi xuất sơ đồ',
                 description:
-                    'Có gì đó không ổn. Cần trợ giúp? chartdb.io@gmail.com',
+                    'Có gì đó không ổn. Cần trợ giúp? support@chartdb.io',
             },
         },
 
@@ -376,7 +452,7 @@ export const vi: LanguageTranslation = {
             error: {
                 title: 'Lỗi khi nhập sơ đồ',
                 description:
-                    'Sơ đồ ở dạng JSON không hợp lệ. Vui lòng kiểm tra JSON và thử lại. Bạn cần trợ giúp? chartdb.io@gmail.com',
+                    'Sơ đồ ở dạng JSON không hợp lệ. Vui lòng kiểm tra JSON và thử lại. Bạn cần trợ giúp? support@chartdb.io',
             },
         },
         // TODO: Translate
@@ -402,7 +478,10 @@ export const vi: LanguageTranslation = {
 
         canvas_context_menu: {
             new_table: 'Tạo bảng mới',
+            new_view: 'Chế độ xem Mới',
             new_relationship: 'Tạo quan hệ mới',
+            // TODO: Translate
+            new_area: 'New Area',
         },
 
         table_node_context_menu: {
@@ -421,6 +500,9 @@ export const vi: LanguageTranslation = {
         language_select: {
             change_language: 'Ngôn ngữ',
         },
+
+        on: 'Bật',
+        off: 'Tắt',
     },
 };
 

@@ -2,17 +2,25 @@ import type { LanguageMetadata } from '../types';
 
 export const en = {
     translation: {
+        editor_sidebar: {
+            new_diagram: 'New',
+            browse: 'Browse',
+            tables: 'Tables',
+            refs: 'Refs',
+            areas: 'Areas',
+            dependencies: 'Dependencies',
+            custom_types: 'Custom Types',
+        },
         menu: {
-            file: {
-                file: 'File',
-                new: 'New',
-                open: 'Open',
+            actions: {
+                actions: 'Actions',
+                new: 'New...',
+                browse: 'Browse...',
                 save: 'Save',
                 import: 'Import',
                 export_sql: 'Export SQL',
                 export_as: 'Export as',
-                delete_diagram: 'Delete Diagram',
-                exit: 'Exit',
+                delete_diagram: 'Delete',
             },
             edit: {
                 edit: 'Edit',
@@ -26,7 +34,10 @@ export const en = {
                 hide_sidebar: 'Hide Sidebar',
                 hide_cardinality: 'Hide Cardinality',
                 show_cardinality: 'Show Cardinality',
+                hide_field_attributes: 'Hide Field Attributes',
+                show_field_attributes: 'Show Field Attributes',
                 zoom_on_scroll: 'Zoom on Scroll',
+                show_views: 'Database Views',
                 theme: 'Theme',
                 show_dependencies: 'Show Dependencies',
                 hide_dependencies: 'Hide Dependencies',
@@ -41,9 +52,7 @@ export const en = {
             help: {
                 help: 'Help',
                 docs_website: 'Docs',
-                visit_website: 'Visit ChartDB',
                 join_discord: 'Join us on Discord',
-                schedule_a_call: 'Talk with us!',
             },
         },
 
@@ -64,20 +73,11 @@ export const en = {
         },
 
         reorder_diagram_alert: {
-            title: 'Reorder Diagram',
+            title: 'Auto Arrange Diagram',
             description:
                 'This action will rearrange all tables in the diagram. Do you want to continue?',
-            reorder: 'Reorder',
+            reorder: 'Auto Arrange',
             cancel: 'Cancel',
-        },
-
-        multiple_schemas_alert: {
-            title: 'Multiple Schemas',
-            description:
-                '{{schemasCount}} schemas in this diagram. Currently displaying: {{formattedSchemas}}.',
-            dont_show_again: "Don't show again",
-            change_schema: 'Change',
-            none: 'none',
         },
 
         copy_to_clipboard_toast: {
@@ -114,14 +114,11 @@ export const en = {
         copied: 'Copied!',
 
         side_panel: {
-            schema: 'Schema:',
-            filter_by_schema: 'Filter by schema',
-            search_schema: 'Search schema...',
-            no_schemas_found: 'No schemas found.',
             view_all_options: 'View all Options...',
             tables_section: {
                 tables: 'Tables',
                 add_table: 'Add Table',
+                add_view: 'Add View',
                 filter: 'Filter',
                 collapse: 'Collapse All',
                 clear: 'Clear Filter',
@@ -145,15 +142,21 @@ export const en = {
                     field_actions: {
                         title: 'Field Attributes',
                         unique: 'Unique',
+                        auto_increment: 'Auto Increment',
                         character_length: 'Max Length',
+                        precision: 'Precision',
+                        scale: 'Scale',
                         comments: 'Comments',
                         no_comments: 'No comments',
+                        default_value: 'Default Value',
+                        no_default: 'No default',
                         delete_field: 'Delete Field',
                     },
                     index_actions: {
                         title: 'Index Attributes',
                         name: 'Name',
                         unique: 'Unique',
+                        index_type: 'Index Type',
                         delete_index: 'Delete Index',
                     },
                     table_actions: {
@@ -170,12 +173,15 @@ export const en = {
                     description: 'Create a table to get started',
                 },
             },
-            relationships_section: {
-                relationships: 'Relationships',
+            refs_section: {
+                refs: 'Refs',
                 filter: 'Filter',
-                add_relationship: 'Add Relationship',
                 collapse: 'Collapse All',
+                add_relationship: 'Add Relationship',
+                relationships: 'Relationships',
+                dependencies: 'Dependencies',
                 relationship: {
+                    relationship: 'Relationship',
                     primary: 'Primary Table',
                     foreign: 'Referenced Table',
                     cardinality: 'Cardinality',
@@ -185,16 +191,8 @@ export const en = {
                         delete_relationship: 'Delete',
                     },
                 },
-                empty_state: {
-                    title: 'No relationships',
-                    description: 'Create a relationship to connect tables',
-                },
-            },
-            dependencies_section: {
-                dependencies: 'Dependencies',
-                filter: 'Filter',
-                collapse: 'Collapse All',
                 dependency: {
+                    dependency: 'Dependency',
                     table: 'Table',
                     dependent_table: 'Dependent View',
                     delete_dependency: 'Delete',
@@ -204,8 +202,58 @@ export const en = {
                     },
                 },
                 empty_state: {
-                    title: 'No dependencies',
-                    description: 'Create a view to get started',
+                    title: 'No relationships',
+                    description: 'Create a relationship to get started',
+                },
+            },
+
+            areas_section: {
+                areas: 'Areas',
+                add_area: 'Add Area',
+                filter: 'Filter',
+                clear: 'Clear Filter',
+                no_results: 'No areas found matching your filter.',
+
+                area: {
+                    area_actions: {
+                        title: 'Area Actions',
+                        edit_name: 'Edit Name',
+                        delete_area: 'Delete Area',
+                    },
+                },
+                empty_state: {
+                    title: 'No areas',
+                    description: 'Create an area to get started',
+                },
+            },
+
+            custom_types_section: {
+                custom_types: 'Custom Types',
+                filter: 'Filter',
+                clear: 'Clear Filter',
+                no_results: 'No custom types found matching your filter.',
+                empty_state: {
+                    title: 'No custom types',
+                    description:
+                        'Custom types will appear here when they are available in your database',
+                },
+                custom_type: {
+                    kind: 'Kind',
+                    enum_values: 'Enum Values',
+                    composite_fields: 'Fields',
+                    no_fields: 'No fields defined',
+                    no_values: 'No enum values defined',
+                    field_name_placeholder: 'Field name',
+                    field_type_placeholder: 'Select type',
+                    add_field: 'Add Field',
+                    no_fields_tooltip: 'No fields defined for this custom type',
+                    custom_type_actions: {
+                        title: 'Actions',
+                        highlight_fields: 'Highlight Fields',
+                        clear_field_highlight: 'Clear Highlight',
+                        delete_custom_type: 'Delete',
+                    },
+                    delete_custom_type: 'Delete Type',
                 },
             },
         },
@@ -217,8 +265,12 @@ export const en = {
             show_all: 'Show All',
             undo: 'Undo',
             redo: 'Redo',
-            reorder_diagram: 'Reorder Diagram',
+            reorder_diagram: 'Auto Arrange Diagram',
             highlight_overlapping_tables: 'Highlight Overlapping Tables',
+            clear_custom_type_highlight: 'Clear highlight for "{{typeName}}"',
+            custom_type_highlight_tooltip:
+                'Highlighting "{{typeName}}" - Click to clear',
+            filter: 'Filter Tables',
         },
 
         new_diagram_dialog: {
@@ -234,7 +286,7 @@ export const en = {
                 title: 'Import your Database',
                 database_edition: 'Database Edition:',
                 step_1: 'Run this script in your database:',
-                step_2: 'Paste the script result here:',
+                step_2: 'Paste the script result into this modal →',
                 script_results_placeholder: 'Script results here...',
                 ssms_instructions: {
                     button_text: 'SSMS Instructions',
@@ -255,7 +307,7 @@ export const en = {
         },
 
         open_diagram_dialog: {
-            title: 'Open Diagram',
+            title: 'Open Database',
             description: 'Select a diagram to open from the list below.',
             table_columns: {
                 name: 'Name',
@@ -265,6 +317,12 @@ export const en = {
             },
             cancel: 'Cancel',
             open: 'Open',
+
+            diagram_actions: {
+                open: 'Open',
+                duplicate: 'Duplicate',
+                delete: 'Delete',
+            },
         },
 
         export_sql_dialog: {
@@ -328,6 +386,11 @@ export const en = {
             scale_4x: '4x',
             cancel: 'Cancel',
             export: 'Export',
+            advanced_options: 'Advanced Options',
+            pattern: 'Include background pattern',
+            pattern_description: 'Add subtle grid pattern to background.',
+            transparent: 'Transparent background',
+            transparent_description: 'Remove background color from image.',
         },
 
         new_table_schema_dialog: {
@@ -343,6 +406,14 @@ export const en = {
             description: 'Update table "{{tableName}}" schema',
             cancel: 'Cancel',
             confirm: 'Change',
+        },
+
+        create_table_schema_dialog: {
+            title: 'Create New Schema',
+            description:
+                'No schemas exist yet. Create your first schema to organize your tables.',
+            create: 'Create',
+            cancel: 'Cancel',
         },
 
         star_us_dialog: {
@@ -361,7 +432,7 @@ export const en = {
             error: {
                 title: 'Error exporting diagram',
                 description:
-                    'Something went wrong. Need help? chartdb.io@gmail.com',
+                    'Something went wrong. Need help? support@chartdb.io',
             },
         },
 
@@ -373,7 +444,7 @@ export const en = {
             error: {
                 title: 'Error importing diagram',
                 description:
-                    'The diagram JSON is invalid. Please check the JSON and try again. Need help? chartdb.io@gmail.com',
+                    'The diagram JSON is invalid. Please check the JSON and try again. Need help? support@chartdb.io',
             },
         },
 
@@ -399,7 +470,9 @@ export const en = {
 
         canvas_context_menu: {
             new_table: 'New Table',
+            new_view: 'New View',
             new_relationship: 'New Relationship',
+            new_area: 'New Area',
         },
 
         table_node_context_menu: {
@@ -418,6 +491,9 @@ export const en = {
         language_select: {
             change_language: 'Language',
         },
+
+        on: 'On',
+        off: 'Off',
     },
 };
 

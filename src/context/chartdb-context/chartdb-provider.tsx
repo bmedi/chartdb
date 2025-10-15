@@ -1,12 +1,15 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import type { DBTable } from '@/lib/domain/db-table';
 import { deepCopy, generateId } from '@/lib/utils';
-import { randomColor } from '@/lib/colors';
+import { defaultTableColor, defaultAreaColor, viewColor } from '@/lib/colors';
 import type { ChartDBContext, ChartDBEvent } from './chartdb-context';
 import { chartDBContext } from './chartdb-context';
 import { DatabaseType } from '@/lib/domain/database-type';
 import type { DBField } from '@/lib/domain/db-field';
-import type { DBIndex } from '@/lib/domain/db-index';
+import {
+    getTableIndexesWithPrimaryKey,
+    type DBIndex,
+} from '@/lib/domain/db-index';
 import type { DBRelationship } from '@/lib/domain/db-relationship';
 import { useStorage } from '@/hooks/use-storage';
 import { useRedoUndoStack } from '@/hooks/use-redo-undo-stack';
@@ -17,13 +20,17 @@ import {
     databasesWithSchemas,
     schemaNameToSchemaId,
 } from '@/lib/domain/db-schema';
-import { useLocalConfig } from '@/hooks/use-local-config';
 import { defaultSchemas } from '@/lib/data/default-schemas';
 import { useEventEmitter } from 'ahooks';
 import type { DBDependency } from '@/lib/domain/db-dependency';
+import type { Area } from '@/lib/domain/area';
 import { storageInitialValue } from '../storage-context/storage-context';
 import { useDiff } from '../diff-context/use-diff';
 import type { DiffCalculatedEvent } from '../diff-context/diff-context';
+import {
+    DBCustomTypeKind,
+    type DBCustomType,
+} from '@/lib/domain/db-custom-type';
 
 export interface ChartDBProviderProps {
     diagram?: Diagram;
@@ -34,11 +41,11 @@ export const ChartDBProvider: React.FC<
     React.PropsWithChildren<ChartDBProviderProps>
 > = ({ children, diagram, readonly: readonlyProp }) => {
     const { hasDiff } = useDiff();
-    let db = useStorage();
+    const storageDB = useStorage();
     const events = useEventEmitter<ChartDBEvent>();
-    const { setSchemasFilter, schemasFilter } = useLocalConfig();
     const { addUndoAction, resetRedoStack, resetUndoStack } =
         useRedoUndoStack();
+
     const [diagramId, setDiagramId] = useState('');
     const [diagramName, setDiagramName] = useState('');
     const [diagramCreatedAt, setDiagramCreatedAt] = useState<Date>(new Date());
@@ -56,13 +63,21 @@ export const ChartDBProvider: React.FC<
     const [dependencies, setDependencies] = useState<DBDependency[]>(
         diagram?.dependencies ?? []
     );
+    const [areas, setAreas] = useState<Area[]>(diagram?.areas ?? []);
+    const [customTypes, setCustomTypes] = useState<DBCustomType[]>(
+        diagram?.customTypes ?? []
+    );
+
     const { events: diffEvents } = useDiff();
 
+    const [highlightedCustomTypeId, setHighlightedCustomTypeId] =
+        useState<string>();
+
     const diffCalculatedHandler = useCallback((event: DiffCalculatedEvent) => {
-        const { tablesAdded, fieldsAdded, relationshipsAdded } = event.data;
+        const { tablesToAdd, fieldsToAdd, relationshipsToAdd } = event.data;
         setTables((tables) =>
-            [...tables, ...(tablesAdded ?? [])].map((table) => {
-                const fields = fieldsAdded.get(table.id);
+            [...tables, ...(tablesToAdd ?? [])].map((table) => {
+                const fields = fieldsToAdd.get(table.id);
                 return fields
                     ? { ...table, fields: [...table.fields, ...fields] }
                     : table;
@@ -70,22 +85,21 @@ export const ChartDBProvider: React.FC<
         );
         setRelationships((relationships) => [
             ...relationships,
-            ...(relationshipsAdded ?? []),
+            ...(relationshipsToAdd ?? []),
         ]);
     }, []);
 
     diffEvents.useSubscription(diffCalculatedHandler);
 
-    const defaultSchemaName = defaultSchemas[databaseType];
+    const defaultSchemaName = useMemo(
+        () => defaultSchemas[databaseType],
+        [databaseType]
+    );
 
     const readonly = useMemo(
         () => readonlyProp ?? hasDiff ?? false,
         [readonlyProp, hasDiff]
     );
-
-    if (readonly) {
-        db = storageInitialValue;
-    }
 
     const schemas = useMemo(
         () =>
@@ -97,9 +111,11 @@ export const ChartDBProvider: React.FC<
                               .filter((schema) => !!schema) as string[]
                       ),
                   ]
-                      .sort((a, b) =>
-                          a === defaultSchemaName ? -1 : a.localeCompare(b)
-                      )
+                      .sort((a, b) => {
+                          if (a === defaultSchemaName) return -1;
+                          if (b === defaultSchemaName) return 1;
+                          return a.localeCompare(b);
+                      })
                       .map(
                           (schema): DBSchema => ({
                               id: schemaNameToSchemaId(schema),
@@ -113,33 +129,10 @@ export const ChartDBProvider: React.FC<
         [tables, defaultSchemaName, databaseType]
     );
 
-    const filterSchemas: ChartDBContext['filterSchemas'] = useCallback(
-        (schemaIds) => {
-            setSchemasFilter((prev) => ({
-                ...prev,
-                [diagramId]: schemaIds,
-            }));
-        },
-        [diagramId, setSchemasFilter]
+    const db = useMemo(
+        () => (readonly ? storageInitialValue : storageDB),
+        [storageDB, readonly]
     );
-
-    const filteredSchemas: ChartDBContext['filteredSchemas'] = useMemo(() => {
-        if (schemas.length === 0) {
-            return undefined;
-        }
-
-        const schemasFilterFromCache =
-            (schemasFilter[diagramId] ?? []).length === 0
-                ? undefined // in case of empty filter, skip cache
-                : schemasFilter[diagramId];
-
-        return (
-            schemasFilterFromCache ?? [
-                schemas.find((s) => s.name === defaultSchemaName)?.id ??
-                    schemas[0]?.id,
-            ]
-        );
-    }, [schemasFilter, diagramId, schemas, defaultSchemaName]);
 
     const currentDiagram: Diagram = useMemo(
         () => ({
@@ -152,6 +145,8 @@ export const ChartDBProvider: React.FC<
             tables,
             relationships,
             dependencies,
+            areas,
+            customTypes,
         }),
         [
             diagramId,
@@ -161,6 +156,8 @@ export const ChartDBProvider: React.FC<
             tables,
             relationships,
             dependencies,
+            areas,
+            customTypes,
             diagramCreatedAt,
             diagramUpdatedAt,
         ]
@@ -172,6 +169,8 @@ export const ChartDBProvider: React.FC<
             setTables([]);
             setRelationships([]);
             setDependencies([]);
+            setAreas([]);
+            setCustomTypes([]);
             setDiagramUpdatedAt(updatedAt);
 
             resetRedoStack();
@@ -182,6 +181,8 @@ export const ChartDBProvider: React.FC<
                 db.deleteDiagramTables(diagramId),
                 db.deleteDiagramRelationships(diagramId),
                 db.deleteDiagramDependencies(diagramId),
+                db.deleteDiagramAreas(diagramId),
+                db.deleteDiagramCustomTypes(diagramId),
             ]);
         }, [db, diagramId, resetRedoStack, resetUndoStack]);
 
@@ -194,6 +195,8 @@ export const ChartDBProvider: React.FC<
             setTables([]);
             setRelationships([]);
             setDependencies([]);
+            setAreas([]);
+            setCustomTypes([]);
             resetRedoStack();
             resetUndoStack();
 
@@ -202,6 +205,8 @@ export const ChartDBProvider: React.FC<
                 db.deleteDiagramRelationships(diagramId),
                 db.deleteDiagram(diagramId),
                 db.deleteDiagramDependencies(diagramId),
+                db.deleteDiagramAreas(diagramId),
+                db.deleteDiagramCustomTypes(diagramId),
             ]);
         }, [db, diagramId, resetRedoStack, resetUndoStack]);
 
@@ -283,22 +288,27 @@ export const ChartDBProvider: React.FC<
     );
 
     const addTables: ChartDBContext['addTables'] = useCallback(
-        async (tables: DBTable[], options = { updateHistory: true }) => {
-            setTables((currentTables) => [...currentTables, ...tables]);
+        async (tablesToAdd: DBTable[], options = { updateHistory: true }) => {
+            setTables((currentTables) => [...currentTables, ...tablesToAdd]);
             const updatedAt = new Date();
             setDiagramUpdatedAt(updatedAt);
             await Promise.all([
                 db.updateDiagram({ id: diagramId, attributes: { updatedAt } }),
-                ...tables.map((table) => db.addTable({ diagramId, table })),
+                ...tablesToAdd.map((table) =>
+                    db.addTable({ diagramId, table })
+                ),
             ]);
 
-            events.emit({ action: 'add_tables', data: { tables } });
+            events.emit({
+                action: 'add_tables',
+                data: { tables: tablesToAdd },
+            });
 
             if (options.updateHistory) {
                 addUndoAction({
                     action: 'addTables',
-                    redoData: { tables },
-                    undoData: { tableIds: tables.map((t) => t.id) },
+                    redoData: { tables: tablesToAdd },
+                    undoData: { tableIds: tablesToAdd.map((t) => t.id) },
                 });
                 resetRedoStack();
             }
@@ -335,12 +345,18 @@ export const ChartDBProvider: React.FC<
                     },
                 ],
                 indexes: [],
-                color: randomColor(),
+                color: attributes?.isView ? viewColor : defaultTableColor,
                 createdAt: Date.now(),
                 isView: false,
                 order: tables.length,
                 ...attributes,
+                schema: attributes?.schema ?? defaultSchemas[databaseType],
             };
+
+            table.indexes = getTableIndexesWithPrimaryKey({
+                table,
+            });
+
             await addTable(table);
 
             return table;
@@ -632,17 +648,30 @@ export const ChartDBProvider: React.FC<
             options = { updateHistory: true }
         ) => {
             const prevField = getField(tableId, fieldId);
+
+            const updateTableFn = (table: DBTable) => {
+                const updatedTable: DBTable = {
+                    ...table,
+                    fields: table.fields.map((f) =>
+                        f.id === fieldId ? { ...f, ...field } : f
+                    ),
+                } satisfies DBTable;
+
+                updatedTable.indexes = getTableIndexesWithPrimaryKey({
+                    table: updatedTable,
+                });
+
+                return updatedTable;
+            };
+
             setTables((tables) =>
-                tables.map((table) =>
-                    table.id === tableId
-                        ? {
-                              ...table,
-                              fields: table.fields.map((f) =>
-                                  f.id === fieldId ? { ...f, ...field } : f
-                              ),
-                          }
-                        : table
-                )
+                tables.map((table) => {
+                    if (table.id === tableId) {
+                        return updateTableFn(table);
+                    }
+
+                    return table;
+                })
             );
 
             const table = await db.getTable({ diagramId, id: tableId });
@@ -657,10 +686,7 @@ export const ChartDBProvider: React.FC<
                 db.updateTable({
                     id: tableId,
                     attributes: {
-                        ...table,
-                        fields: table.fields.map((f) =>
-                            f.id === fieldId ? { ...f, ...field } : f
-                        ),
+                        ...updateTableFn(table),
                     },
                 }),
             ]);
@@ -687,19 +713,29 @@ export const ChartDBProvider: React.FC<
             fieldId: string,
             options = { updateHistory: true }
         ) => {
+            const updateTableFn = (table: DBTable) => {
+                const updatedTable: DBTable = {
+                    ...table,
+                    fields: table.fields.filter((f) => f.id !== fieldId),
+                } satisfies DBTable;
+
+                updatedTable.indexes = getTableIndexesWithPrimaryKey({
+                    table: updatedTable,
+                });
+
+                return updatedTable;
+            };
+
             const fields = getTable(tableId)?.fields ?? [];
             const prevField = getField(tableId, fieldId);
             setTables((tables) =>
-                tables.map((table) =>
-                    table.id === tableId
-                        ? {
-                              ...table,
-                              fields: table.fields.filter(
-                                  (f) => f.id !== fieldId
-                              ),
-                          }
-                        : table
-                )
+                tables.map((table) => {
+                    if (table.id === tableId) {
+                        return updateTableFn(table);
+                    }
+
+                    return table;
+                })
             );
 
             events.emit({
@@ -723,8 +759,7 @@ export const ChartDBProvider: React.FC<
                 db.updateTable({
                     id: tableId,
                     attributes: {
-                        ...table,
-                        fields: table.fields.filter((f) => f.id !== fieldId),
+                        ...updateTableFn(table),
                     },
                 }),
             ]);
@@ -757,13 +792,23 @@ export const ChartDBProvider: React.FC<
             options = { updateHistory: true }
         ) => {
             const fields = getTable(tableId)?.fields ?? [];
-            setTables((tables) =>
-                tables.map((table) =>
-                    table.id === tableId
-                        ? { ...table, fields: [...table.fields, field] }
-                        : table
-                )
-            );
+            setTables((tables) => {
+                return tables.map((table) => {
+                    if (table.id === tableId) {
+                        db.updateTable({
+                            id: tableId,
+                            attributes: {
+                                ...table,
+                                fields: [...table.fields, field],
+                            },
+                        });
+
+                        return { ...table, fields: [...table.fields, field] };
+                    }
+
+                    return table;
+                });
+            });
 
             events.emit({
                 action: 'add_field',
@@ -784,13 +829,6 @@ export const ChartDBProvider: React.FC<
             setDiagramUpdatedAt(updatedAt);
             await Promise.all([
                 db.updateDiagram({ id: diagramId, attributes: { updatedAt } }),
-                db.updateTable({
-                    id: tableId,
-                    attributes: {
-                        ...table,
-                        fields: [...table.fields, field],
-                    },
-                }),
             ]);
 
             if (options.updateHistory) {
@@ -1077,12 +1115,15 @@ export const ChartDBProvider: React.FC<
 
                 const sourceFieldName = sourceField?.name ?? '';
 
+                const targetTable = getTable(targetTableId);
+                const targetTableSchema = targetTable?.schema;
+
                 const relationship: DBRelationship = {
                     id: generateId(),
                     name: `${sourceTableName}_${sourceFieldName}_fk`,
                     sourceSchema: sourceTable?.schema,
                     sourceTableId,
-                    targetSchema: sourceTable?.schema,
+                    targetSchema: targetTableSchema,
                     targetTableId,
                     sourceFieldId,
                     targetFieldId,
@@ -1363,20 +1404,161 @@ export const ChartDBProvider: React.FC<
         ]
     );
 
+    // Area operations
+    const addAreas: ChartDBContext['addAreas'] = useCallback(
+        async (areas: Area[], options = { updateHistory: true }) => {
+            setAreas((currentAreas) => [...currentAreas, ...areas]);
+
+            const updatedAt = new Date();
+            setDiagramUpdatedAt(updatedAt);
+
+            await Promise.all([
+                ...areas.map((area) => db.addArea({ diagramId, area })),
+                db.updateDiagram({ id: diagramId, attributes: { updatedAt } }),
+            ]);
+
+            if (options.updateHistory) {
+                addUndoAction({
+                    action: 'addAreas',
+                    redoData: { areas },
+                    undoData: { areaIds: areas.map((a) => a.id) },
+                });
+                resetRedoStack();
+            }
+        },
+        [db, diagramId, setAreas, addUndoAction, resetRedoStack]
+    );
+
+    const addArea: ChartDBContext['addArea'] = useCallback(
+        async (area: Area, options = { updateHistory: true }) => {
+            return addAreas([area], options);
+        },
+        [addAreas]
+    );
+
+    const createArea: ChartDBContext['createArea'] = useCallback(
+        async (attributes) => {
+            const area: Area = {
+                id: generateId(),
+                name: `Area ${areas.length + 1}`,
+                x: 0,
+                y: 0,
+                width: 300,
+                height: 200,
+                color: defaultAreaColor,
+                ...attributes,
+            };
+
+            await addArea(area);
+
+            return area;
+        },
+        [areas, addArea]
+    );
+
+    const getArea: ChartDBContext['getArea'] = useCallback(
+        (id: string) => areas.find((area) => area.id === id) ?? null,
+        [areas]
+    );
+
+    const removeAreas: ChartDBContext['removeAreas'] = useCallback(
+        async (ids: string[], options = { updateHistory: true }) => {
+            const prevAreas = [
+                ...areas.filter((area) => ids.includes(area.id)),
+            ];
+
+            setAreas((areas) => areas.filter((area) => !ids.includes(area.id)));
+
+            const updatedAt = new Date();
+            setDiagramUpdatedAt(updatedAt);
+
+            await Promise.all([
+                ...ids.map((id) => db.deleteArea({ diagramId, id })),
+                db.updateDiagram({ id: diagramId, attributes: { updatedAt } }),
+            ]);
+
+            if (prevAreas.length > 0 && options.updateHistory) {
+                addUndoAction({
+                    action: 'removeAreas',
+                    redoData: { areaIds: ids },
+                    undoData: { areas: prevAreas },
+                });
+                resetRedoStack();
+            }
+        },
+        [db, diagramId, setAreas, areas, addUndoAction, resetRedoStack]
+    );
+
+    const removeArea: ChartDBContext['removeArea'] = useCallback(
+        async (id: string, options = { updateHistory: true }) => {
+            return removeAreas([id], options);
+        },
+        [removeAreas]
+    );
+
+    const updateArea: ChartDBContext['updateArea'] = useCallback(
+        async (
+            id: string,
+            area: Partial<Area>,
+            options = { updateHistory: true }
+        ) => {
+            const prevArea = getArea(id);
+
+            setAreas((areas) =>
+                areas.map((a) => (a.id === id ? { ...a, ...area } : a))
+            );
+
+            const updatedAt = new Date();
+            setDiagramUpdatedAt(updatedAt);
+
+            await Promise.all([
+                db.updateDiagram({ id: diagramId, attributes: { updatedAt } }),
+                db.updateArea({ id, attributes: area }),
+            ]);
+
+            if (!!prevArea && options.updateHistory) {
+                addUndoAction({
+                    action: 'updateArea',
+                    redoData: { areaId: id, area },
+                    undoData: { areaId: id, area: prevArea },
+                });
+                resetRedoStack();
+            }
+        },
+        [db, diagramId, setAreas, getArea, addUndoAction, resetRedoStack]
+    );
+
+    const highlightCustomTypeId = useCallback(
+        (id?: string) => setHighlightedCustomTypeId(id),
+        [setHighlightedCustomTypeId]
+    );
+
+    const highlightedCustomType = useMemo(() => {
+        return highlightedCustomTypeId
+            ? customTypes.find((type) => type.id === highlightedCustomTypeId)
+            : undefined;
+    }, [highlightedCustomTypeId, customTypes]);
+
     const loadDiagramFromData: ChartDBContext['loadDiagramFromData'] =
         useCallback(
-            async (diagram) => {
+            (diagram) => {
                 setDiagramId(diagram.id);
                 setDiagramName(diagram.name);
                 setDatabaseType(diagram.databaseType);
                 setDatabaseEdition(diagram.databaseEdition);
-                setTables(diagram?.tables ?? []);
-                setRelationships(diagram?.relationships ?? []);
-                setDependencies(diagram?.dependencies ?? []);
+                setTables(diagram.tables ?? []);
+                setRelationships(diagram.relationships ?? []);
+                setDependencies(diagram.dependencies ?? []);
+                setAreas(diagram.areas ?? []);
+                setCustomTypes(diagram.customTypes ?? []);
                 setDiagramCreatedAt(diagram.createdAt);
                 setDiagramUpdatedAt(diagram.updatedAt);
+                setHighlightedCustomTypeId(undefined);
 
                 events.emit({ action: 'load_diagram', data: { diagram } });
+
+                resetRedoStack();
+                resetUndoStack();
             },
             [
                 setDiagramId,
@@ -1386,18 +1568,35 @@ export const ChartDBProvider: React.FC<
                 setTables,
                 setRelationships,
                 setDependencies,
+                setAreas,
+                setCustomTypes,
                 setDiagramCreatedAt,
                 setDiagramUpdatedAt,
+                setHighlightedCustomTypeId,
                 events,
+                resetRedoStack,
+                resetUndoStack,
             ]
         );
 
+    const updateDiagramData: ChartDBContext['updateDiagramData'] = useCallback(
+        async (diagram, options) => {
+            const st = options?.forceUpdateStorage ? storageDB : db;
+            await st.deleteDiagram(diagram.id);
+            await st.addDiagram({ diagram });
+            loadDiagramFromData(diagram);
+        },
+        [db, storageDB, loadDiagramFromData]
+    );
+
     const loadDiagram: ChartDBContext['loadDiagram'] = useCallback(
         async (diagramId: string) => {
-            const diagram = await db.getDiagram(diagramId, {
+            const diagram = await storageDB.getDiagram(diagramId, {
                 includeRelationships: true,
                 includeTables: true,
                 includeDependencies: true,
+                includeAreas: true,
+                includeCustomTypes: true,
             });
 
             if (diagram) {
@@ -1406,7 +1605,151 @@ export const ChartDBProvider: React.FC<
 
             return diagram;
         },
-        [db, loadDiagramFromData]
+        [storageDB, loadDiagramFromData]
+    );
+
+    // Custom type operations
+    const getCustomType: ChartDBContext['getCustomType'] = useCallback(
+        (id: string) => customTypes.find((type) => type.id === id) ?? null,
+        [customTypes]
+    );
+
+    const addCustomTypes: ChartDBContext['addCustomTypes'] = useCallback(
+        async (
+            customTypes: DBCustomType[],
+            options = { updateHistory: true }
+        ) => {
+            setCustomTypes((currentTypes) => [...currentTypes, ...customTypes]);
+            const updatedAt = new Date();
+            setDiagramUpdatedAt(updatedAt);
+
+            await Promise.all([
+                db.updateDiagram({ id: diagramId, attributes: { updatedAt } }),
+                ...customTypes.map((customType) =>
+                    db.addCustomType({ diagramId, customType })
+                ),
+            ]);
+
+            if (options.updateHistory) {
+                addUndoAction({
+                    action: 'addCustomTypes',
+                    redoData: { customTypes },
+                    undoData: { customTypeIds: customTypes.map((t) => t.id) },
+                });
+                resetRedoStack();
+            }
+        },
+        [db, diagramId, setCustomTypes, addUndoAction, resetRedoStack]
+    );
+
+    const addCustomType: ChartDBContext['addCustomType'] = useCallback(
+        async (customType: DBCustomType, options = { updateHistory: true }) => {
+            return addCustomTypes([customType], options);
+        },
+        [addCustomTypes]
+    );
+
+    const createCustomType: ChartDBContext['createCustomType'] = useCallback(
+        async (attributes) => {
+            const customType: DBCustomType = {
+                id: generateId(),
+                name: `type_${customTypes.length + 1}`,
+                kind: DBCustomTypeKind.enum,
+                values: [],
+                fields: [],
+                ...attributes,
+            };
+
+            await addCustomType(customType);
+            return customType;
+        },
+        [addCustomType, customTypes]
+    );
+
+    const removeCustomTypes: ChartDBContext['removeCustomTypes'] = useCallback(
+        async (ids, options = { updateHistory: true }) => {
+            const typesToRemove = ids
+                .map((id) => getCustomType(id))
+                .filter(Boolean) as DBCustomType[];
+
+            setCustomTypes((types) =>
+                types.filter((type) => !ids.includes(type.id))
+            );
+
+            const updatedAt = new Date();
+            setDiagramUpdatedAt(updatedAt);
+
+            await Promise.all([
+                db.updateDiagram({ id: diagramId, attributes: { updatedAt } }),
+                ...ids.map((id) => db.deleteCustomType({ diagramId, id })),
+            ]);
+
+            if (typesToRemove.length > 0 && options.updateHistory) {
+                addUndoAction({
+                    action: 'removeCustomTypes',
+                    redoData: {
+                        customTypeIds: ids,
+                    },
+                    undoData: {
+                        customTypes: typesToRemove,
+                    },
+                });
+                resetRedoStack();
+            }
+        },
+        [
+            db,
+            diagramId,
+            setCustomTypes,
+            addUndoAction,
+            resetRedoStack,
+            getCustomType,
+        ]
+    );
+
+    const removeCustomType: ChartDBContext['removeCustomType'] = useCallback(
+        async (id: string, options = { updateHistory: true }) => {
+            return removeCustomTypes([id], options);
+        },
+        [removeCustomTypes]
+    );
+
+    const updateCustomType: ChartDBContext['updateCustomType'] = useCallback(
+        async (
+            id: string,
+            customType: Partial<DBCustomType>,
+            options = { updateHistory: true }
+        ) => {
+            const prevCustomType = getCustomType(id);
+            setCustomTypes((types) =>
+                types.map((t) => (t.id === id ? { ...t, ...customType } : t))
+            );
+
+            const updatedAt = new Date();
+            setDiagramUpdatedAt(updatedAt);
+
+            await Promise.all([
+                db.updateDiagram({ id: diagramId, attributes: { updatedAt } }),
+                db.updateCustomType({ id, attributes: customType }),
+            ]);
+
+            if (!!prevCustomType && options.updateHistory) {
+                addUndoAction({
+                    action: 'updateCustomType',
+                    redoData: { customTypeId: id, customType },
+                    undoData: { customTypeId: id, customType: prevCustomType },
+                });
+                resetRedoStack();
+            }
+        },
+        [
+            db,
+            setCustomTypes,
+            addUndoAction,
+            resetRedoStack,
+            getCustomType,
+            diagramId,
+        ]
     );
 
     return (
@@ -1418,12 +1761,12 @@ export const ChartDBProvider: React.FC<
                 tables,
                 relationships,
                 dependencies,
+                areas,
                 currentDiagram,
                 schemas,
-                filteredSchemas,
                 events,
                 readonly,
-                filterSchemas,
+                updateDiagramData,
                 updateDiagramId,
                 updateDiagramName,
                 loadDiagram,
@@ -1465,6 +1808,23 @@ export const ChartDBProvider: React.FC<
                 removeDependency,
                 removeDependencies,
                 updateDependency,
+                createArea,
+                addArea,
+                addAreas,
+                getArea,
+                removeArea,
+                removeAreas,
+                updateArea,
+                customTypes,
+                createCustomType,
+                addCustomType,
+                addCustomTypes,
+                getCustomType,
+                removeCustomType,
+                removeCustomTypes,
+                updateCustomType,
+                highlightCustomTypeId,
+                highlightedCustomType,
             }}
         >
             {children}

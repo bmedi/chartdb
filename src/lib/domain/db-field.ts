@@ -1,11 +1,10 @@
 import { z } from 'zod';
-import { dataTypeSchema, type DataType } from '../data/data-types/data-types';
-import type { ColumnInfo } from '../data/import-metadata/metadata-types/column-info';
-import type { AggregatedIndexInfo } from '../data/import-metadata/metadata-types/index-info';
-import type { PrimaryKeyInfo } from '../data/import-metadata/metadata-types/primary-key-info';
-import type { TableInfo } from '../data/import-metadata/metadata-types/table-info';
-import { generateId } from '../utils';
-import { schemaNameToDomainSchemaName } from './db-schema';
+import {
+    dataTypeSchema,
+    findDataTypeDataById,
+    type DataType,
+} from '../data/data-types/data-types';
+import type { DatabaseType } from './database-type';
 
 export interface DBField {
     id: string;
@@ -14,13 +13,14 @@ export interface DBField {
     primaryKey: boolean;
     unique: boolean;
     nullable: boolean;
+    increment?: boolean | null;
     createdAt: number;
-    characterMaximumLength?: string;
-    precision?: number;
-    scale?: number;
-    default?: string;
-    collation?: string;
-    comments?: string;
+    characterMaximumLength?: string | null;
+    precision?: number | null;
+    scale?: number | null;
+    default?: string | null;
+    collation?: string | null;
+    comments?: string | null;
 }
 
 export const dbFieldSchema: z.ZodType<DBField> = z.object({
@@ -30,81 +30,89 @@ export const dbFieldSchema: z.ZodType<DBField> = z.object({
     primaryKey: z.boolean(),
     unique: z.boolean(),
     nullable: z.boolean(),
+    increment: z.boolean().or(z.null()).optional(),
     createdAt: z.number(),
-    characterMaximumLength: z.string().optional(),
-    precision: z.number().optional(),
-    scale: z.number().optional(),
-    default: z.string().optional(),
-    collation: z.string().optional(),
-    comments: z.string().optional(),
+    characterMaximumLength: z.string().or(z.null()).optional(),
+    precision: z.number().or(z.null()).optional(),
+    scale: z.number().or(z.null()).optional(),
+    default: z.string().or(z.null()).optional(),
+    collation: z.string().or(z.null()).optional(),
+    comments: z.string().or(z.null()).optional(),
 });
 
-export const createFieldsFromMetadata = ({
-    columns,
-    tableSchema,
-    tableInfo,
-    primaryKeys,
-    aggregatedIndexes,
-}: {
-    columns: ColumnInfo[];
-    tableSchema?: string;
-    tableInfo: TableInfo;
-    primaryKeys: PrimaryKeyInfo[];
-    aggregatedIndexes: AggregatedIndexInfo[];
-}) => {
-    const uniqueColumns = columns
-        .filter(
-            (col) =>
-                schemaNameToDomainSchemaName(col.schema) === tableSchema &&
-                col.table === tableInfo.table
-        )
-        .reduce((acc, col) => {
-            if (!acc.has(col.name)) {
-                acc.set(col.name, col);
-            }
-            return acc;
-        }, new Map<string, ColumnInfo>());
+export const generateDBFieldSuffix = (
+    field: DBField,
+    {
+        databaseType,
+        forceExtended = false,
+        typeId,
+    }: {
+        databaseType?: DatabaseType;
+        forceExtended?: boolean;
+        typeId?: string;
+    } = {}
+): string => {
+    if (databaseType && forceExtended && typeId) {
+        return generateExtendedSuffix(field, databaseType, typeId);
+    }
 
-    const sortedColumns = Array.from(uniqueColumns.values()).sort(
-        (a, b) => a.ordinal_position - b.ordinal_position
-    );
+    return generateStandardSuffix(field);
+};
 
-    const tablePrimaryKeys = primaryKeys
-        .filter(
-            (pk) =>
-                pk.table === tableInfo.table &&
-                schemaNameToDomainSchemaName(pk.schema) === tableSchema
-        )
-        .map((pk) => pk.column.trim());
+const generateExtendedSuffix = (
+    field: DBField,
+    databaseType: DatabaseType,
+    typeId: string
+): string => {
+    const type = findDataTypeDataById(typeId, databaseType);
 
-    return sortedColumns.map(
-        (col: ColumnInfo): DBField => ({
-            id: generateId(),
-            name: col.name,
-            type: {
-                id: col.type.split(' ').join('_').toLowerCase(),
-                name: col.type.toLowerCase(),
-            },
-            primaryKey: tablePrimaryKeys.includes(col.name),
-            unique: Object.values(aggregatedIndexes).some(
-                (idx) =>
-                    idx.unique &&
-                    idx.columns.length === 1 &&
-                    idx.columns[0].name === col.name
-            ),
-            nullable: col.nullable,
-            ...(col.character_maximum_length &&
-            col.character_maximum_length !== 'null'
-                ? { characterMaximumLength: col.character_maximum_length }
-                : {}),
-            ...(col.precision?.precision
-                ? { precision: col.precision.precision }
-                : {}),
-            ...(col.precision?.scale ? { scale: col.precision.scale } : {}),
-            ...(col.default ? { default: col.default } : {}),
-            ...(col.collation ? { collation: col.collation } : {}),
-            createdAt: Date.now(),
-            comments: col.comment ? col.comment : undefined,
-        })
-    );
+    if (!type?.fieldAttributes) {
+        return '';
+    }
+
+    const { fieldAttributes } = type;
+
+    // Character maximum length types (e.g., VARCHAR)
+    if (fieldAttributes.hasCharMaxLength) {
+        const maxLength = field.characterMaximumLength ?? 'n';
+        return `(${maxLength})`;
+    }
+
+    // Precision and scale types (e.g., DECIMAL)
+    if (fieldAttributes.precision && fieldAttributes.scale) {
+        return formatPrecisionAndScale(field.precision, field.scale, '(p, s)');
+    }
+
+    // Precision only types (e.g., FLOAT)
+    if (fieldAttributes.precision) {
+        const precision = field.precision ?? 'p';
+        return `(${precision})`;
+    }
+
+    return '';
+};
+
+const generateStandardSuffix = (field: DBField): string => {
+    // Character maximum length
+    if (field.characterMaximumLength) {
+        return `(${field.characterMaximumLength})`;
+    }
+
+    return formatPrecisionAndScale(field.precision, field.scale, '');
+};
+
+const formatPrecisionAndScale = (
+    precision: number | null | undefined,
+    scale: number | null | undefined,
+    fallback: string
+): string => {
+    if (precision && scale) {
+        return `(${precision}, ${scale})`;
+    }
+
+    if (precision) {
+        return `(${precision})`;
+    }
+
+    return fallback;
 };
