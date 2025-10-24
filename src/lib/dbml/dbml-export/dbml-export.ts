@@ -583,6 +583,54 @@ const fixMultilineTableNames = (dbml: string): string => {
     );
 };
 
+// Restore increment attribute for auto-incrementing fields
+const restoreIncrementAttribute = (dbml: string, tables: DBTable[]): string => {
+    if (!tables || tables.length === 0) return dbml;
+
+    let result = dbml;
+
+    tables.forEach((table) => {
+        // Find fields with increment=true
+        const incrementFields = table.fields.filter((f) => f.increment);
+
+        incrementFields.forEach((field) => {
+            // Build the table identifier pattern
+            const tableIdentifier = table.schema
+                ? `"${table.schema.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"\\."${table.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`
+                : `"${table.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`;
+
+            // Escape field name for regex
+            const escapedFieldName = field.name.replace(
+                /[.*+?^${}()|[\]\\]/g,
+                '\\$&'
+            );
+
+            // Pattern to match the field line with existing attributes in brackets
+            // Matches: "field_name" type [existing, attributes]
+            const fieldPattern = new RegExp(
+                `(Table ${tableIdentifier} \\{[^}]*?^\\s*"${escapedFieldName}"[^\\[\\n]+)(\\[[^\\]]*\\])`,
+                'gms'
+            );
+
+            result = result.replace(
+                fieldPattern,
+                (match, fieldPart, brackets) => {
+                    // Check if increment already exists
+                    if (brackets.includes('increment')) {
+                        return match;
+                    }
+
+                    // Add increment to the attributes
+                    const newBrackets = brackets.replace(']', ', increment]');
+                    return fieldPart + newBrackets;
+                }
+            );
+        });
+    });
+
+    return result;
+};
+
 // Restore composite primary key names in the DBML
 const restoreCompositePKNames = (dbml: string, tables: DBTable[]): string => {
     if (!tables || tables.length === 0) return dbml;
@@ -759,31 +807,37 @@ export function generateDBMLFromDiagram(diagram: Diagram): DBMLExportResult {
             };
         }) ?? [];
 
-    // Remove duplicate tables (consider both schema and table name)
+    // Filter out empty tables and duplicates in a single pass for performance
     const seenTableIdentifiers = new Set<string>();
-    const uniqueTables = sanitizedTables.filter((table) => {
+    const tablesWithFields = sanitizedTables.filter((table) => {
+        // Skip tables with no fields (empty tables cause DBML export to fail)
+        if (table.fields.length === 0) {
+            return false;
+        }
+
         // Create a unique identifier combining schema and table name
         const tableIdentifier = table.schema
             ? `${table.schema}.${table.name}`
             : table.name;
 
+        // Skip duplicate tables
         if (seenTableIdentifiers.has(tableIdentifier)) {
-            return false; // Skip duplicate
+            return false;
         }
         seenTableIdentifiers.add(tableIdentifier);
-        return true; // Keep unique table
+        return true; // Keep unique, non-empty table
     });
 
     // Create the base filtered diagram structure
     const filteredDiagram: Diagram = {
         ...diagram,
-        tables: uniqueTables,
+        tables: tablesWithFields,
         relationships:
             diagram.relationships?.filter((rel) => {
-                const sourceTable = uniqueTables.find(
+                const sourceTable = tablesWithFields.find(
                     (t) => t.id === rel.sourceTableId
                 );
-                const targetTable = uniqueTables.find(
+                const targetTable = tablesWithFields.find(
                     (t) => t.id === rel.targetTableId
                 );
                 const sourceFieldExists = sourceTable?.fields.some(
@@ -883,10 +937,13 @@ export function generateDBMLFromDiagram(diagram: Diagram): DBMLExportResult {
         );
 
         // Restore schema information that may have been stripped by DBML importer
-        standard = restoreTableSchemas(standard, uniqueTables);
+        standard = restoreTableSchemas(standard, tablesWithFields);
 
         // Restore composite primary key names
-        standard = restoreCompositePKNames(standard, uniqueTables);
+        standard = restoreCompositePKNames(standard, tablesWithFields);
+
+        // Restore increment attribute for auto-incrementing fields
+        standard = restoreIncrementAttribute(standard, tablesWithFields);
 
         // Prepend Enum DBML to the standard output
         if (enumsDBML) {
