@@ -2,6 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import ChartDBLogo from '@/assets/logo-light.png';
 import ChartDBDarkLogo from '@/assets/logo-dark.png';
 import { useTheme } from '@/hooks/use-theme';
+import { getHomepageUrl } from '@/lib/base-url';
 import { LocalConfigProvider } from '@/context/local-config-context/local-config-provider';
 import { ThemeProvider } from '@/context/theme-context/theme-provider';
 import { Button } from '@/components/button/button';
@@ -126,7 +127,7 @@ const TemplatePageComponent: React.FC = () => {
                     <div className="flex flex-1 justify-start gap-x-3">
                         <div className="flex items-center font-primary">
                             <a
-                                href="https://chartdb.io"
+                                href={getHomepageUrl()}
                                 className="cursor-pointer"
                                 rel="noreferrer"
                             >

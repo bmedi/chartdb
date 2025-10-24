@@ -6,6 +6,7 @@ import { DiagramName } from './diagram-name';
 import { LastSaved } from './last-saved';
 import { LanguageNav } from './language-nav/language-nav';
 import { Menu } from './menu/menu';
+import { getHomepageUrl } from '@/lib/base-url';
 
 export interface TopNavbarProps {}
 
@@ -28,7 +29,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = () => {
             <div className="flex flex-1 flex-col justify-between gap-x-1 md:flex-row md:justify-normal">
                 <div className="flex items-center justify-between pt-[8px] font-primary md:py-[10px]">
                     <a
-                        href="https://chartdb.io"
+                        href={getHomepageUrl()}
                         className="cursor-pointer"
                         rel="noreferrer"
                     >

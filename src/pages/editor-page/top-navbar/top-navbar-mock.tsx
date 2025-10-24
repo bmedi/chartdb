@@ -3,6 +3,7 @@ import React from 'react';
 import ChartDBLogo from '@/assets/logo-light.png';
 import ChartDBDarkLogo from '@/assets/logo-dark.png';
 import { useTheme } from '@/hooks/use-theme';
+import { getHomepageUrl } from '@/lib/base-url';
 
 export const TopNavbarMock: React.FC = () => {
     const { effectiveTheme } = useTheme();
@@ -11,7 +12,7 @@ export const TopNavbarMock: React.FC = () => {
             <div className="flex flex-1 flex-col justify-between gap-x-1 md:flex-row md:justify-normal">
                 <div className="flex items-center justify-between pt-[8px] font-primary md:py-[10px]">
                     <a
-                        href="https://chartdb.io"
+                        href={getHomepageUrl()}
                         className="cursor-pointer"
                         rel="noreferrer"
                     >

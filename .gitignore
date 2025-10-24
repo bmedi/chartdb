@@ -24,6 +24,42 @@ dist-ssr
 *.sw?
 
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 stats/
 .github
 .husky
+
+# IDE and Editor files
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+.vscode/.ropeproject
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Testing
+coverage/
+.nyc_output/
+junit.xml
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Cursor AI files (optional - see discussion below)
+.cursor/

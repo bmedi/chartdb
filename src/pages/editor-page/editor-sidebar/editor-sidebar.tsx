@@ -26,6 +26,7 @@ import { useBreakpoint } from '@/hooks/use-breakpoint';
 import ChartDBLogo from '@/assets/logo-light.png';
 import ChartDBDarkLogo from '@/assets/logo-dark.png';
 import { useTheme } from '@/hooks/use-theme';
+import { getHomepageUrl } from '@/lib/base-url';
 import { useChartDB } from '@/hooks/use-chartdb';
 import { DatabaseType } from '@/lib/domain/database-type';
 import { useDialog } from '@/hooks/use-dialog';
@@ -172,7 +173,7 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = () => {
             {!isDesktop ? (
                 <SidebarHeader>
                     <a
-                        href="https://chartdb.io"
+                        href={getHomepageUrl()}
                         className="cursor-pointer"
                         rel="noreferrer"
                     >

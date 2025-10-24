@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  chartdb:
+    image: chartdb-ollama:latest
+    container_name: chartdb-app
+    ports:
+      - "8081:80"
+    environment:
+      OPENAI_API_ENDPOINT: http://host.docker.internal:11434/v1
+      LLM_MODEL_NAME: llama3.2:latest
+      HIDE_CHARTDB_CLOUD: "false"
+      DISABLE_ANALYTICS: "true"
+      VITE_APP_URL: http://localhost:8081
+      VITE_HOST_URL: http://localhost:8081
+    restart: unless-stopped

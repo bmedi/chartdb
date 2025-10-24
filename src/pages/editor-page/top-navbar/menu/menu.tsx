@@ -519,6 +519,20 @@ export const Menu: React.FC<MenuProps> = () => {
             </MenubarMenu>
 
             <MenubarMenu>
+                <MenubarTrigger>Templates</MenubarTrigger>
+                <MenubarContent>
+                    <MenubarItem onClick={() => navigate('/templates')}>
+                        Browse Templates
+                    </MenubarItem>
+                    <MenubarItem
+                        onClick={() => navigate('/templates/featured')}
+                    >
+                        Featured Templates
+                    </MenubarItem>
+                </MenubarContent>
+            </MenubarMenu>
+
+            <MenubarMenu>
                 <MenubarTrigger>{t('menu.help.help')}</MenubarTrigger>
                 <MenubarContent>
                     <MenubarItem onClick={openChartDBDocs}>

@@ -49,6 +49,7 @@ import { laravelActivitylogDb } from './templates/laravel-activitylog-db';
 import { pixelfedDb } from './templates/pixelfed-db';
 import { polrDb } from './templates/polr-db';
 import { djangoAxesDb } from './templates/django-axes-db';
+import { basicCrm } from './templates/crm/basic-crm';
 export interface Template {
     slug: string;
     name: string;
@@ -63,6 +64,7 @@ export interface Template {
 }
 
 export const templates: Template[] = [
+    basicCrm,
     employeeDb,
     pokemonDb,
     airbnbDb,
